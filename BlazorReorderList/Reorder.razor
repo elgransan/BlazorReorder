@@ -16,26 +16,30 @@
     </div>
 }
 
-<div @ref="container" class="sortable">
-    @foreach(var item in Items.Select((v, i) => (v, i)))
-    {
-        <div @ref="itemElem[item.i]" class="item @(item.v.Equals(ghost) ? "active" : "")"
-            @onmousedown="(e) => onPress(e, item.v, item.i)" @onmousedown:preventDefault>
-        @ChildContent(item.v)
-        </div>
-    }
-</div>
+@if (itemElem != null)
+{
+    <div @ref="container" class="sortable">
+        @foreach (var item in Items.Select((v, i) => (v, i)))
+        {
+            <div @ref="itemElem[item.i]" class="item @(item.v.Equals(ghost) ? "active" : "")"
+            @onmousedown="async (e) => await onPress(e, item.v, item.i)">
+                @ChildContent(item.v)
+            </div>
+        }
+    </div>
+}
 
 @code 
 {
     [Parameter, EditorRequired] public RenderFragment<TItem> ChildContent { get; set; } = null!;
     [Parameter, EditorRequired] public List<TItem> Items { get; set; } = null!;
     [Parameter] public bool withShadow { get; set; } = true;
+    [Parameter] public bool debug { get; set; } = false;
 
-    private bool shouldRender = true;
-    private DotNetObjectReference<Reorder<TItem>>? dotNetHelper;
+    private bool shouldRender = true; // cancel re-rendering
+    private DotNetObjectReference<Reorder<TItem>>? dotNetHelper; //js-interop 2-ways
     ElementReference container;
-    ElementReference[] itemElem;
+    ElementReference[]? itemElem;
     ElementReference ghostElem;
     TItem? ghost;
     point elemPosition = new point(0, 0);
@@ -45,7 +49,6 @@
     int elemIndex = -1;
     int newElemIndex = -1;
 
-    bool debug = false;
     string log = "", log2 = "";
 
     protected override void OnParametersSet()
@@ -65,16 +68,18 @@
         }
     }
 
-    public async Task onPress(MouseEventArgs m, TItem item, int index)
+    public async Task<bool> onPress(MouseEventArgs m, TItem item, int index)
     {
+        if (itemElem == null) return true;
+        shouldRender = false; // Because the method triggers re-render, the click propagation is canceled, if you have a link/or any click event inside it's going to stop working
         ghost = item;
         ghostElem = itemElem[index];
         elemIndex = index;
         elemWidth = await js.getWidth(ghostElem);
         elemPosition = await js.getPosition(ghostElem);
         elemClickPosition = await js.getPoint(m);
-        Log($"onPress ({elemPosition.x}, {elemPosition.y}) {item}");
-        await onMove(elemClickPosition);
+
+        return true;
     }
 
     [JSInvokable]
@@ -107,7 +112,7 @@
     [JSInvokable]
     public async Task onMove(point pos)
     {
-        if (Items == null) return;
+        if (Items == null || itemElem == null) return;
         if (ghost != null)
         {
             ghostTrans = new point(pos.x - elemClickPosition.x, pos.y - elemClickPosition.y);
