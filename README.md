@@ -29,4 +29,4 @@ Example code:
 
 Here are a live example:
 
-![sortable](https://user-images.githubusercontent.com/9949584/161866022-03fdf1ef-d6a3-49f0-965e-496ebb264858.gif)
+![sortable](https://user-images.githubusercontent.com/9949584/161866643-fff9989b-ca23-475d-83e0-3d80b1a77740.gif)
