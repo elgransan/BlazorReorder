@@ -1,5 +1,6 @@
 @typeparam TItem
-@inject IJSRuntime JS
+@using Microsoft.JSInterop
+@inject ReorderJsInterop<TItem> js
 
 @if (debug)
 {
@@ -31,9 +32,6 @@
     [Parameter, EditorRequired] public List<TItem> Items { get; set; } = null!;
     [Parameter] public bool withShadow { get; set; } = true;
 
-    public record point(int x, int y);
-    public record clientRect(float left, float top, float right, float bottom, float x, float y, float width, float height);
-
     private bool shouldRender = true;
     private DotNetObjectReference<Reorder<TItem>>? dotNetHelper;
     ElementReference container;
@@ -63,7 +61,7 @@
         if (firstRender)
         {
             dotNetHelper = DotNetObjectReference.Create(this);
-            await JS.InvokeVoidAsync("initEvents", dotNetHelper);
+            await js.initEvents(dotNetHelper);
         }
     }
 
@@ -72,9 +70,9 @@
         ghost = item;
         ghostElem = itemElem[index];
         elemIndex = index;
-        elemWidth = await JS.InvokeAsync<int>("getWidth", ghostElem);
-        elemPosition = await JS.InvokeAsync<point>("getPosition", ghostElem);
-        elemClickPosition = await JS.InvokeAsync<point>("getPoint", m);
+        elemWidth = await js.getWidth(ghostElem);
+        elemPosition = await js.getPosition(ghostElem);
+        elemClickPosition = await js.getPoint(m);
         Log($"onPress ({elemPosition.x}, {elemPosition.y}) {item}");
         await onMove(elemClickPosition);
     }
@@ -154,7 +152,7 @@
     // checks if mouse x/y is on top of an item 
     async Task<bool> isOnTop(ElementReference item, point pos)
     {
-        var box = await JS.InvokeAsync<clientRect>("getClientRect", item);
+        var box = await js.getClientRect(item);
         Log($"\npos x: {pos.x}, y: {pos.y}\n item: left:{box.left}, width:{box.width}\nitem: top:{box.top}, height:{box.height}", true);
         var isx = (pos.x > box.left && pos.x < (box.left + box.width));
         var isy = (pos.y > box.top && pos.y < (box.top + box.height));

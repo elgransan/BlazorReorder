@@ -11,6 +11,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.2" PrivateAssets="all" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlazorReorderList\BlazorReorderList.csproj" />
+  </ItemGroup>
   
   <PropertyGroup>
     <LibSassOutputStyle>compressed</LibSassOutputStyle>
