@@ -1,18 +1,18 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Blazor Reorder Example</PageTitle>
 
 <h1>Hello, sorted world!</h1>
 
 Welcome to your new reorderer list.
 
 <div class="card">
-<Reorder Items="list" TItem="ListItem">
-    <div class="mb-2 mx-2">
-        <h5>@context.title</h5>
-        <p>@context.details <a href="@context.url">Go</a></p>      
-    </div>
-</Reorder>
+    <Reorder Items="list" TItem="ListItem">
+        <div class="mb-2 mx-2">
+            <h5>@context.title</h5>
+            <p>@context.details <a href="@context.url">Go</a></p>      
+        </div>
+    </Reorder>
 </div>
 
 @code
