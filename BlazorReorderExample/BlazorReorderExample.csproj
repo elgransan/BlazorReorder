@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibSassBuilder" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.2" PrivateAssets="all" />
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <LibSassOutputStyle>compressed</LibSassOutputStyle>
+    <LibSassOutputStyle Condition="'$(Configuration)' == 'Debug'">expanded</LibSassOutputStyle>
+    <LibSassOutputLevel>verbose</LibSassOutputLevel>
+    <LibSassMessageLevel>High</LibSassMessageLevel>
+  </PropertyGroup>
+
+</Project>

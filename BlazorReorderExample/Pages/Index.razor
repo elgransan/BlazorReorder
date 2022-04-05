@@ -1,0 +1,30 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, sorted world!</h1>
+
+Welcome to your new reorderer list.
+
+<div class="card">
+<Reorder Items="list" TItem="ListItem">
+    <div class="mb-2 mx-2">
+        <h5>@context.title</h5>
+        <p>@context.details <a href="@context.url">Go</a></p>      
+    </div>
+</Reorder>
+</div>
+
+@code
+{
+    public record ListItem(string title, string url, string details);
+
+    public List<ListItem> list = new()
+    {
+        new ListItem("Google", "google.com", "Again looking for a bug ..."),
+        new ListItem("StackOverflow", "stackoverflow.com", "Could be this the solution?"),
+        new ListItem("GitHub", "github.com", "Let's steal awesome code"),
+        new ListItem("Twitter", "twitter.com", "What a genious am I"),
+        new ListItem("Another", "another.com", "The solution must be somewhere!!!")
+    };
+}

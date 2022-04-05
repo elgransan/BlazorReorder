@@ -1,0 +1,175 @@
+@typeparam TItem
+@inject IJSRuntime JS
+
+@if (debug)
+{
+    <p>@log</p>
+    <p>@log2</p>
+}
+
+@if(ghost != null)
+{
+    <div class="item dragging" 
+         style="width: @(elemWidth)px; left: @(elemPosition.x)px; top: @(elemPosition.y)px; transform: translateX(@(ghostTrans.x)px) translateY(@(ghostTrans.y)px )">
+    @ChildContent(ghost)
+    </div>
+}
+
+<div @ref="container" class="sortable">
+    @foreach(var item in Items.Select((v, i) => (v, i)))
+    {
+        <div @ref="itemElem[item.i]" class="item @(item.v.Equals(ghost) ? "active" : "")"
+            @onmousedown="(e) => onPress(e, item.v, item.i)" @onmousedown:preventDefault>
+        @ChildContent(item.v)
+        </div>
+    }
+</div>
+
+@code 
+{
+    [Parameter, EditorRequired] public RenderFragment<TItem> ChildContent { get; set; } = null!;
+    [Parameter, EditorRequired] public List<TItem> Items { get; set; } = null!;
+    [Parameter] public bool withShadow { get; set; } = true;
+
+    public record point(int x, int y);
+    public record clientRect(float left, float top, float right, float bottom, float x, float y, float width, float height);
+
+    private bool shouldRender = true;
+    private DotNetObjectReference<Reorder<TItem>>? dotNetHelper;
+    ElementReference container;
+    ElementReference[] itemElem;
+    ElementReference ghostElem;
+    TItem? ghost;
+    point elemPosition = new point(0, 0);
+    point elemClickPosition = new point(0, 0);
+    point ghostTrans = new point(0, 0);
+    int elemWidth = 0;
+    int elemIndex = -1;
+    int newElemIndex = -1;
+
+    bool debug = false;
+    string log = "", log2 = "";
+
+    protected override void OnParametersSet()
+    {
+        if (Items == null) return;
+
+        var count = Items.Count;
+        itemElem = new ElementReference[count];
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetHelper = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("initEvents", dotNetHelper);
+        }
+    }
+
+    public async Task onPress(MouseEventArgs m, TItem item, int index)
+    {
+        ghost = item;
+        ghostElem = itemElem[index];
+        elemIndex = index;
+        elemWidth = await JS.InvokeAsync<int>("getWidth", ghostElem);
+        elemPosition = await JS.InvokeAsync<point>("getPosition", ghostElem);
+        elemClickPosition = await JS.InvokeAsync<point>("getPoint", m);
+        Log($"onPress ({elemPosition.x}, {elemPosition.y}) {item}");
+        await onMove(elemClickPosition);
+    }
+
+    [JSInvokable]
+    public void onRelease(MouseEventArgs m)
+    {
+        if (Items == null) return;
+        if (ghost != null)
+        {
+            ghost = default(TItem);
+            ghostElem = default;
+            ghostTrans = new point(0, 0);
+            elemPosition = new point(0, 0);
+            elemClickPosition = new point(0, 0);
+            elemWidth = 0;
+
+            // flip
+            if (!withShadow)
+            {
+                var item = Items[elemIndex];
+                shouldRender = false;
+                Items.RemoveAt(elemIndex);
+                Items.Insert(newElemIndex, item);
+                shouldRender = true;
+                Log("mouseup" + ghost);
+            }
+            StateHasChanged();
+        }
+    }
+
+    [JSInvokable]
+    public async Task onMove(point pos)
+    {
+        if (Items == null) return;
+        if (ghost != null)
+        {
+            ghostTrans = new point(pos.x - elemClickPosition.x, pos.y - elemClickPosition.y);
+            Log($"onMove ({ghostTrans.x}, {ghostTrans.y}) {ghost}");
+
+            // check if current drag item is over another item and swap places 
+            for(var b = 0; b < itemElem.Length; ++b)
+            {
+                if (b == elemIndex) continue;
+                var subItem = itemElem[b];
+
+                if (await isOnTop(subItem, pos))
+                {
+                    // reorder
+                    newElemIndex = b;
+                    var item = Items[elemIndex];
+                    var item2 = Items[newElemIndex];
+                    // flip
+                    if (withShadow)
+                    {
+                        shouldRender = false;
+                        Items.RemoveAt(elemIndex);
+                        Items.Insert(newElemIndex, item);
+                        elemIndex = newElemIndex;
+                        shouldRender = true;
+                    }
+
+                    Log($"Sobre {item2}");
+                    break;
+                }
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    protected override bool ShouldRender()
+    {
+        return shouldRender;
+    }
+
+    // checks if mouse x/y is on top of an item 
+    async Task<bool> isOnTop(ElementReference item, point pos)
+    {
+        var box = await JS.InvokeAsync<clientRect>("getClientRect", item);
+        Log($"\npos x: {pos.x}, y: {pos.y}\n item: left:{box.left}, width:{box.width}\nitem: top:{box.top}, height:{box.height}", true);
+        var isx = (pos.x > box.left && pos.x < (box.left + box.width));
+        var isy = (pos.y > box.top && pos.y < (box.top + box.height));
+        var res = isx && isy;
+
+        return res;
+    }
+
+    void Log(string info, bool sublog = false)
+    {
+        if (debug)
+        {
+            if (sublog) log2 = info;
+            else log = info;
+        }
+    }
+
+}

@@ -1,0 +1,29 @@
+﻿@page "/counter"
+
+@inject IJSRuntime JS
+
+<div @ref="_element" style="width: 200px; height: 200px; background-color: blue;"></div>
+
+@foreach(var c in click)
+{
+    <p>@c</p>
+}
+
+
+@code {
+    ElementReference _element;
+    List<string> click = new();
+
+    [JSInvokable]
+    public void OnClick(IJSObjectReference jsReference)
+    {
+        click.Add("click");
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        JS.InvokeVoidAsync("interop.AddEventListener", _element, "click", DotNetObjectReference.Create(this), nameof(OnClick));
+    }
+}

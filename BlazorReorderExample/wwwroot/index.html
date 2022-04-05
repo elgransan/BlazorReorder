@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>BlazorReorderExample</title>
+    <base href="/" />
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="BlazorReorderExample.styles.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="app">Loading...</div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="_framework/blazor.webassembly.js"></script>
+    
+    <script type="text/javascript">
+        var _w = window,
+            _b = document.body,
+            _d = document.documentElement;
+   
+       // get position of mouse/touch in relation to viewport 
+        function getPoint( e ) {
+            var scrollX = Math.max( 0, _w.pageXOffset || _d.scrollLeft || _b.scrollLeft || 0 ) - ( _d.clientLeft || 0 ), 
+                scrollY = Math.max( 0, _w.pageYOffset || _d.scrollTop || _b.scrollTop || 0 ) - ( _d.clientTop || 0 ), 
+                pointX  = e ? ( Math.max( 0, e.pageX || e.clientX || 0 ) - scrollX ) : 0,
+                pointY  = e ? ( Math.max( 0, e.pageY || e.clientY || 0 ) - scrollY ) : 0; 
+
+            return { x: pointX, y: pointY }; 
+        }
+
+        function initEvents(dotNetInstance) {
+            window.addEventListener("mousemove", (e) => dotNetInstance.invokeMethodAsync("onMove", getPoint(e)), true);
+            window.addEventListener("touchmove", (e) => dotNetInstance.invokeMethodAsync("onMove", getPoint(e)), true);
+            window.addEventListener("mouseup", (e) => dotNetInstance.invokeMethodAsync("onRelease", e), true);
+            window.addEventListener("touchend", (e) => dotNetInstance.invokeMethodAsync("onRelease", e), true);
+        }
+
+        function getWidth(e) {
+            return e.offsetWidth;
+        }
+        function getPosition(e) {
+            return { x: e.offsetLeft, y: e.offsetTop };
+        }
+        function getClientRect(e) {
+            return e.getBoundingClientRect();
+        }
+    </script>
+</body>
+
+</html>
