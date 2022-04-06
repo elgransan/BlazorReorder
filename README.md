@@ -37,4 +37,6 @@ Here is an example:
 - [x] Component RCL
 - [x] Easy Restyling
 - [ ] Drag & Drop between lists
+- [ ] Drag handler
+- [ ] Copy between lists
 - [ ] Callback functionality
