@@ -12,9 +12,12 @@
 }
 
 .dragging {
-  background: #e0ffff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   opacity: 0.8;
   position: absolute;
   z-index: 999;
 }
+
+    .dragging:hover {
+        background: #e0ffff;
+    }

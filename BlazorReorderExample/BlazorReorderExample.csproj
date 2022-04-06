@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LibSassBuilder" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.2" PrivateAssets="all" />
   </ItemGroup>
@@ -15,12 +14,5 @@
   <ItemGroup>
     <ProjectReference Include="..\BlazorReorderList\BlazorReorderList.csproj" />
   </ItemGroup>
-  
-  <PropertyGroup>
-    <LibSassOutputStyle>compressed</LibSassOutputStyle>
-    <LibSassOutputStyle Condition="'$(Configuration)' == 'Debug'">expanded</LibSassOutputStyle>
-    <LibSassOutputLevel>verbose</LibSassOutputLevel>
-    <LibSassMessageLevel>High</LibSassMessageLevel>
-  </PropertyGroup>
 
 </Project>

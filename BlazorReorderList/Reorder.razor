@@ -10,7 +10,7 @@
 
 @if(ghost != null)
 {
-    <div class="item dragging" 
+    <div class="dragging item" 
          style="width: @(elemWidth)px; left: @(elemPosition.x)px; top: @(elemPosition.y)px; transform: translateX(@(ghostTrans.x)px) translateY(@(ghostTrans.y)px )">
     @ChildContent(ghost)
     </div>
@@ -68,9 +68,9 @@
         }
     }
 
-    public async Task<bool> onPress(MouseEventArgs m, TItem item, int index)
+    public async Task onPress(MouseEventArgs m, TItem item, int index)
     {
-        if (itemElem == null) return true;
+        if (itemElem == null) return;
         shouldRender = false; // Because the method triggers re-render, the click propagation is canceled, if you have a link/or any click event inside it's going to stop working
         ghost = item;
         ghostElem = itemElem[index];
@@ -78,8 +78,6 @@
         elemWidth = await js.getWidth(ghostElem);
         elemPosition = await js.getPosition(ghostElem);
         elemClickPosition = await js.getPoint(m);
-
-        return true;
     }
 
     [JSInvokable]

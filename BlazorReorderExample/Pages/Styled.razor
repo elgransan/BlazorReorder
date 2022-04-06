@@ -1,0 +1,28 @@
+﻿@page "/styled"
+
+<PageTitle>Blazor Reorder Example</PageTitle>
+
+<h1>Hello, sorted world!</h1>
+
+Welcome to your new reorderer list.
+
+<div class="card">
+    <Reorder Items="list" TItem="ListItem">
+        <div class="mb-2 mx-2">
+            <h5>@context.title</h5>
+            <p>@context.details <a href="@context.url">Go</a></p>      
+        </div>
+    </Reorder>
+</div>
+
+@code
+{
+    public List<ListItem> list = new()
+    {
+        new ListItem("Google", "https://google.com", "Again looking for a bug ..."),
+        new ListItem("StackOverflow", "https://stackoverflow.com", "Could be this the solution?"),
+        new ListItem("GitHub", "https://github.com", "Let's get awesome code"),
+        new ListItem("Twitter", "https://twitter.com", "I want to rest"),
+        new ListItem("Another", "https://another.com", "The solution must be somewhere!!!")
+    };
+}

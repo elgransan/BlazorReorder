@@ -1,0 +1,23 @@
+﻿::deep .item {
+    cursor: move;
+    user-select: none;
+}
+
+    ::deep .item:hover {
+        background: #4cff00;
+    }
+
+::deep .active {
+    background: #b200ff;
+}
+
+::deep .dragging {
+    box-shadow: 0 4px 20px #ffd800AA;
+    opacity: 0.8;
+    position: absolute;
+    z-index: 999;
+}
+
+    ::deep .dragging:hover {
+        background: #ffd800;
+    }
