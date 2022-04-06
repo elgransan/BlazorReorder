@@ -27,6 +27,6 @@ Example code:
         };
     }
 
-Here are a live example:
+Here is an example:
 
 ![sortable](https://user-images.githubusercontent.com/9949584/161866643-fff9989b-ca23-475d-83e0-3d80b1a77740.gif)
