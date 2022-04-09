@@ -4,20 +4,53 @@ using Microsoft.JSInterop;
 
 namespace BlazorReorderList;
 
-public class ReorderJsInterop<TItem> : IAsyncDisposable
+public class ReorderService<TItem> : IAsyncDisposable
 {
     private readonly Lazy<Task<IJSObjectReference>> moduleTask;
+    public List<TItem>? originItems;
+    public List<ElementReference>? originItemElem;
+    public int elemIndex = -1;
+    public TItem selected = default(TItem);
+    public point elemClickPosition = new point(0, 0);
+    public ElementReference elemRef = default(ElementReference);
+    public bool isDragging = false;
 
-    public ReorderJsInterop(IJSRuntime jsRuntime)
+    public ReorderService(IJSRuntime jsRuntime)
     {
-        moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
+     moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
             "import", "./_content/BlazorReorderList/ReorderJsInterop.js").AsTask());
+    }
+
+    public void Set(List<TItem> list, TItem item, int index, List<ElementReference> itemElem, ElementReference elem, point clickPoint)
+    {
+        isDragging = true;
+        originItems = list;
+        selected = item;
+        elemIndex = index;
+        originItemElem = itemElem;
+        elemRef = elem;
+        elemClickPosition = clickPoint;
+    }
+
+    public void Reset()
+    {
+        isDragging = false;
+        originItems = default(List<TItem>);
+        selected = default(TItem);
+        elemRef = default(ElementReference);
+        elemClickPosition = new point(0, 0);
     }
 
     public async ValueTask initEvents(DotNetObjectReference<Reorder<TItem>> dotNetInstance)
     {
         var module = await moduleTask.Value;
         await module.InvokeVoidAsync("initEvents", dotNetInstance);
+    }
+
+    public async ValueTask removeEvents(DotNetObjectReference<Reorder<TItem>> dotNetInstance)
+    {
+        var module = await moduleTask.Value;
+        await module.InvokeVoidAsync("removeEvents", dotNetInstance);
     }
 
     public async ValueTask<int> getWidth(ElementReference el)

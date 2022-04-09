@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32314.265
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorReorderExample", "BlazorReorderExample\BlazorReorderExample.csproj", "{43EF61CE-4621-48DB-8648-AA686391D140}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorReorderList", "BlazorReorderList\BlazorReorderList.csproj", "{3DCD1165-CC1D-4015-A6D4-CE97E8A4A72B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorReorderList", "BlazorReorderList\BlazorReorderList.csproj", "{3DCD1165-CC1D-4015-A6D4-CE97E8A4A72B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

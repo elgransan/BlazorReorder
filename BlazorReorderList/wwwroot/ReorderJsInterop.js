@@ -2,6 +2,7 @@
 var _w = window,
     _b = document.body,
     _d = document.documentElement;
+var dotNetInstance = [];
 
 // get position of mouse/touch in relation to viewport 
 export function getPoint(e) {
@@ -13,11 +14,29 @@ export function getPoint(e) {
     return { x: pointX, y: pointY };
 }
 
-export function initEvents(dotNetInstance) {
-    window.addEventListener("mousemove", (e) => dotNetInstance.invokeMethodAsync("onMove", getPoint(e)), true);
-    window.addEventListener("touchmove", (e) => dotNetInstance.invokeMethodAsync("onMove", getPoint(e)), true);
-    window.addEventListener("mouseup", (e) => dotNetInstance.invokeMethodAsync("onRelease", e), true);
-    window.addEventListener("touchend", (e) => dotNetInstance.invokeMethodAsync("onRelease", e), true);
+export function initEvents(dotNet) {
+    dotNetInstance.push(dotNet);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("touchmove", onMove);
+    window.addEventListener("mouseup", onRelease);
+    window.addEventListener("touchend", onRelease);
+}
+
+export function removeEvents(dotNet) {
+    dotNetInstance = dotNetInstance.filter(x => x._id !== dotNet._id);
+}
+
+function onMove(e) {
+    var point = getPoint(e);
+    for (var i = 0; i < dotNetInstance.length; i++) {
+        dotNetInstance[i].invokeMethodAsync("onMove", point);
+    }
+}
+
+export function onRelease(e) {
+    for (var i = 0; i < dotNetInstance.length; i++) {
+        dotNetInstance[i].invokeMethodAsync("onRelease", e);
+    }
 }
 
 export function getWidth(e) {
