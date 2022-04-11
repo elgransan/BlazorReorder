@@ -42,5 +42,5 @@ Drag between lists:
 - [x] Easy Restyling
 - [x] Drag & Drop between lists
 - [ ] Drag handler
-- [ ] Copy between lists
+- [X] Copy between lists
 - [ ] Callback functionality
