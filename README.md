@@ -43,6 +43,7 @@ Drag between lists:
 - [x] Drag & Drop between lists
 - [ ] Drag handler
 - [X] Copy between lists
-- [ ] Callback functionality (OnStart, OnChange, OnFinish)
+- [X] Callback functionality (OnStart, OnChange, OnFinish)
 - [ ] Code cleanup
 - [ ] Documentation
+- [ ] Create Public Nuget Package
