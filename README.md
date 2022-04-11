@@ -47,3 +47,4 @@ Drag between lists:
 - [ ] Code cleanup
 - [ ] Documentation
 - [ ] Create Public Nuget Package
+- [ ] Properties: Disabled, DisableDrop, DisableDrag
