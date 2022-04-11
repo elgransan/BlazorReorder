@@ -12,6 +12,7 @@
 }
 
 ::deep .dragging {
+    background: #ffd800;
     box-shadow: 0 4px 20px #ffd800AA;
     opacity: 0.8;
     position: absolute;

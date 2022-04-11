@@ -5,7 +5,7 @@
 <h1>Drag between lists</h1>
 
 <div class="row">
-    <div class="col-6">
+    <div class="col-4">
         <div class="card">
             <Reorder Items="list1" TItem="ListItem">
                 <div class="mb-2 mx-2">
@@ -15,9 +15,19 @@
             </Reorder>
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-4">
         <div class="card">
             <Reorder Items="list2" TItem="ListItem">
+                <div class="mb-2 mx-2">
+                    <h5>@context.title</h5>
+                    <p>@context.details <a href="@context.url">Go</a></p>      
+                </div>
+            </Reorder>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card">
+            <Reorder Items="list3" TItem="ListItem">
                 <div class="mb-2 mx-2">
                     <h5>@context.title</h5>
                     <p>@context.details <a href="@context.url">Go</a></p>      
@@ -37,12 +47,16 @@
         new ListItem("Twitter", "https://twitter.com", "I want to rest"),
         new ListItem("Another", "https://another.com", "The solution must be somewhere!!!")
     };
-
+    
     public List<ListItem> list2 = new()
     {
         new ListItem("Facebook", "https://facebook.com", "Meta"),
         new ListItem("Instagram", "https://instagram.com", "Meta"),
         new ListItem("Whatsapp", "https://web.whatsapp.com", "Meta"),
+    };
+
+    public List<ListItem> list3 = new()
+    {
         new ListItem("Oculus", "https://oculus.com", "Meta"),
     };
 }
