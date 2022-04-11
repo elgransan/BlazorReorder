@@ -43,4 +43,6 @@ Drag between lists:
 - [x] Drag & Drop between lists
 - [ ] Drag handler
 - [X] Copy between lists
-- [ ] Callback functionality
+- [ ] Callback functionality (OnStart, OnChange, OnFinish)
+- [ ] Code cleanup
+- [ ] Documentation
