@@ -11,7 +11,7 @@
     <p>@log2</p>
 }
 
-@if(rs.selected != null && rs.originItems == Items)
+@if(rs.isDragging && elemPosition.x != -1000)
 {
     <div class="dragging item" 
          style="width: @(elemWidth)px; left: @(elemPosition.x)px; top: @(elemPosition.y)px; transform: translateX(@(ghostTrans.x)px) translateY(@(ghostTrans.y)px )">
@@ -21,7 +21,7 @@
 
 @if (itemElem != null)
 {
-    <div class="sortable">
+    <div class="sortable" @ref="sortable">
         @foreach (var item in Items.Select((v, i) => (v, i)))
         {
             <div @ref="itemElem[item.i]" class="item @(item.v.Equals(rs.selected) ? "active" : "")"
@@ -42,9 +42,11 @@
 
     private bool shouldRender = true; // cancel re-rendering
     private DotNetObjectReference<Reorder<TItem>>? dotNetHelper; //js-interop 2-ways
-    List<ElementReference>? itemElem;
-    point elemPosition = new point(0, 0);
+    Dictionary<int, ElementReference> itemElem = new();
+    ElementReference? sortable;
+    point elemPosition = new point(-1000, 0);
     point ghostTrans = new point(0, 0);
+    point clickPosition = new point(0, 0);
     int elemWidth = 0;
     int newElemIndex = -1;
 
@@ -70,13 +72,6 @@
         });
     }
 
-    protected override void OnParametersSet()
-    {
-        var count = Items.Count;
-        itemElem = new();
-        for (int i = 0; i < count; i++) itemElem.Add(default(ElementReference));
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -93,19 +88,17 @@
         var ghostElem = itemElem[index];
         elemWidth = await rs.getWidth(ghostElem);
         elemPosition = await rs.getPosition(ghostElem);
-        var clickPos = await rs.getPoint(m);
-        rs.Set(Items, item, index, itemElem, ghostElem, clickPos);
+        clickPosition = await rs.getPoint(m);
+        rs.Set(Items, item, index, clickPosition);
     }
 
     [JSInvokable]
     public void onRelease(MouseEventArgs m)
     {
-        if (rs.isDragging)
+        elemPosition = new point(-1000, 0);
+        if (rs.isDragging && rs.originItems == Items)
         {
             rs.Reset();
-            ghostTrans = new point(0, 0);
-            elemPosition = new point(0, 0);
-            elemWidth = 0;
 
             // flip
             if (!WithShadow)
@@ -117,58 +110,45 @@
                 Log("mouseup");
             }
             shouldRender = true;
-            StateHasChanged();
         }
+        StateHasChanged();
     }
 
     [JSInvokable]
     public async Task onMove(point pos)
     {
         if (itemElem == null) return;
-        //Console.WriteLine(rs.isDragging ? "dragging" : "not dragging");
         if (rs.isDragging)
         {
+            shouldRender = false;
             ghostTrans = new point(pos.x - rs.elemClickPosition.x, pos.y - rs.elemClickPosition.y);
-            Log($"onMove ({ghostTrans.x}, {ghostTrans.y}) {rs.selected}");
+            Log($"onMove ({elemPosition.x}, {elemPosition.y})");
 
             // check if current drag item is over another item and swap places 
-            for(var b = 0; b < itemElem.Count; ++b)
+            for (var b = 0; b < itemElem.Count; ++b)
             {
-                if (rs.originItems == Items && b == rs.elemIndex) continue;
                 var subItem = itemElem[b];
+                if (rs.originItems == Items && b == rs.elemIndex) continue;
 
-                if (await isOnTop(subItem, pos))
+                // If is on top of an element or if top top of a empty list -> confirm drag
+                if (await isOnTop(subItem, pos) ||
+                Items.Count == 0 && await isOnTop((ElementReference) sortable, pos))
                 {
                     // reorder
                     newElemIndex = b;
-                    var item2 = Items[newElemIndex];
-                    Log($"Sobre {item2}");
-                    // flip
                     if (WithShadow)
                     {
-                        shouldRender = false;
                         rs.originItems.RemoveAt(rs.elemIndex);
                         Items.Insert(newElemIndex, rs.selected);
-                        if (rs.originItems != Items)
-                        {
-                            rs.originItemElem.RemoveAt(rs.elemIndex);
-                            itemElem.Insert(newElemIndex, rs.elemRef);
-                            rs.originItems = Items;
-                            rs.originItemElem = itemElem;
-                        }
                         rs.elemIndex = newElemIndex;
+                        if (rs.originItems != Items) rs.originItems = Items;
                         break;
                     }
                 }
             }
-            
+
             shouldRender = true;
             StateHasChanged();
-        }
-
-        if (rs.originItems != Items)
-        {
-            Log("Over another");
         }
     }
 
@@ -181,6 +161,7 @@
     async Task<bool> isOnTop(ElementReference item, point pos)
     {
         var box = await rs.getClientRect(item);
+        if (box.width < 0) return false;
         Log($"\npos x: {pos.x}, y: {pos.y}\n item: left:{box.left}, width:{box.width}\nitem: top:{box.top}, height:{box.height}", true);
         var isx = (pos.x > box.left && pos.x < (box.left + box.width));
         var isy = (pos.y > box.top && pos.y < (box.top + box.height));
@@ -197,5 +178,4 @@
             else log = info;
         }
     }
-
 }

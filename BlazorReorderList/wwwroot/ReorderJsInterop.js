@@ -14,6 +14,7 @@ export function getPoint(e) {
     return { x: pointX, y: pointY };
 }
 
+// init events for each list (if the event exists it's ignored)
 export function initEvents(dotNet) {
     dotNetInstance.push(dotNet);
     window.addEventListener("mousemove", onMove);
@@ -22,10 +23,12 @@ export function initEvents(dotNet) {
     window.addEventListener("touchend", onRelease);
 }
 
+// only remove from the collection
 export function removeEvents(dotNet) {
     dotNetInstance = dotNetInstance.filter(x => x._id !== dotNet._id);
 }
 
+// only invoke events form the collection
 function onMove(e) {
     var point = getPoint(e);
     for (var i = 0; i < dotNetInstance.length; i++) {
@@ -33,6 +36,7 @@ function onMove(e) {
     }
 }
 
+// only invoke events form the collection
 export function onRelease(e) {
     for (var i = 0; i < dotNetInstance.length; i++) {
         dotNetInstance[i].invokeMethodAsync("onRelease", e);
@@ -46,5 +50,7 @@ export function getPosition(e) {
     return { x: e.offsetLeft, y: e.offsetTop };
 }
 export function getClientRect(e) {
+    // blazor reset elements id in the middle of the query, so this invalidate the query and prevents errors
+    if (e === null || e === undefined) return { width: -1 };
     return e.getBoundingClientRect();
 }

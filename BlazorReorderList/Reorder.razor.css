@@ -1,3 +1,7 @@
+.sortable {
+    min-height: 10px;
+}
+
 .item {
   cursor: move;
   user-select: none;
