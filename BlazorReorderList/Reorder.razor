@@ -1,27 +1,30 @@
 @typeparam TItem
+@using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.JSInterop
-@inject ReorderJsInterop<TItem> js
+@inject ReorderService<TItem> rs
+@inject NavigationManager nav
+@implements IDisposable
 
-@if (debug)
+@if (Debug)
 {
     <p>@log</p>
     <p>@log2</p>
 }
 
-@if(ghost != null)
+@if(rs.isDragging && elemPosition.x != -1000)
 {
     <div class="dragging item" 
          style="width: @(elemWidth)px; left: @(elemPosition.x)px; top: @(elemPosition.y)px; transform: translateX(@(ghostTrans.x)px) translateY(@(ghostTrans.y)px )">
-    @ChildContent(ghost)
+    @ChildContent(rs.selected)
     </div>
 }
 
 @if (itemElem != null)
 {
-    <div @ref="container" class="sortable">
+    <div class="sortable" @ref="sortable">
         @foreach (var item in Items.Select((v, i) => (v, i)))
         {
-            <div @ref="itemElem[item.i]" class="item @(item.v.Equals(ghost) ? "active" : "")"
+            <div @ref="itemElem[item.i]" class="item @(item.v.Equals(rs.selected) ? "active" : "")"
             @onmousedown="async (e) => await onPress(e, item.v, item.i)">
                 @ChildContent(item.v)
             </div>
@@ -33,30 +36,40 @@
 {
     [Parameter, EditorRequired] public RenderFragment<TItem> ChildContent { get; set; } = null!;
     [Parameter, EditorRequired] public List<TItem> Items { get; set; } = null!;
-    [Parameter] public bool withShadow { get; set; } = true;
-    [Parameter] public bool debug { get; set; } = false;
+    [Parameter] public bool Copy { get; set; } = false;
+    [Parameter] public bool WithShadow { get; set; } = true;
+    [Parameter] public bool Debug { get; set; } = false;
 
     private bool shouldRender = true; // cancel re-rendering
     private DotNetObjectReference<Reorder<TItem>>? dotNetHelper; //js-interop 2-ways
-    ElementReference container;
-    ElementReference[]? itemElem;
-    ElementReference ghostElem;
-    TItem? ghost;
-    point elemPosition = new point(0, 0);
-    point elemClickPosition = new point(0, 0);
+    Dictionary<int, ElementReference> itemElem = new();
+    ElementReference? sortable;
+    point elemPosition = new point(-1000, 0);
     point ghostTrans = new point(0, 0);
+    point clickPosition = new point(0, 0);
     int elemWidth = 0;
-    int elemIndex = -1;
     int newElemIndex = -1;
 
     string log = "", log2 = "";
 
-    protected override void OnParametersSet()
+    protected override void OnInitialized()
     {
-        if (Items == null) return;
+        nav.LocationChanged += HandleLocationChanged;
+    }
 
-        var count = Items.Count;
-        itemElem = new ElementReference[count];
+    public void Dispose()
+    {
+        nav.LocationChanged -= HandleLocationChanged;
+    }
+
+    public void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        if (dotNetHelper == null) return;
+        base.InvokeAsync(async () =>
+        {
+            await rs.removeEvents(dotNetHelper);
+            StateHasChanged();
+        });
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -64,7 +77,7 @@
         if (firstRender)
         {
             dotNetHelper = DotNetObjectReference.Create(this);
-            await js.initEvents(dotNetHelper);
+            await rs.initEvents(dotNetHelper);
         }
     }
 
@@ -72,77 +85,69 @@
     {
         if (itemElem == null) return;
         shouldRender = false; // Because the method triggers re-render, the click propagation is canceled, if you have a link/or any click event inside it's going to stop working
-        ghost = item;
-        ghostElem = itemElem[index];
-        elemIndex = index;
-        elemWidth = await js.getWidth(ghostElem);
-        elemPosition = await js.getPosition(ghostElem);
-        elemClickPosition = await js.getPoint(m);
+        var ghostElem = itemElem[index];
+        elemWidth = await rs.getWidth(ghostElem);
+        elemPosition = await rs.getPosition(ghostElem);
+        clickPosition = await rs.getPoint(m);
+        rs.Set(Items, item, index, clickPosition);
     }
 
     [JSInvokable]
     public void onRelease(MouseEventArgs m)
     {
-        if (Items == null) return;
-        if (ghost != null)
+        elemPosition = new point(-1000, 0);
+        if (rs.isDragging && rs.originItems == Items)
         {
-            ghost = default(TItem);
-            ghostElem = default;
-            ghostTrans = new point(0, 0);
-            elemPosition = new point(0, 0);
-            elemClickPosition = new point(0, 0);
-            elemWidth = 0;
+            rs.Reset();
 
             // flip
-            if (!withShadow)
+            if (!WithShadow)
             {
-                var item = Items[elemIndex];
+                var item = Items[rs.elemIndex];
                 shouldRender = false;
-                Items.RemoveAt(elemIndex);
+                Items.RemoveAt(rs.elemIndex);
                 Items.Insert(newElemIndex, item);
-                shouldRender = true;
-                Log("mouseup" + ghost);
+                Log("mouseup");
             }
-            StateHasChanged();
+            shouldRender = true;
         }
+        StateHasChanged();
     }
 
     [JSInvokable]
     public async Task onMove(point pos)
     {
-        if (Items == null || itemElem == null) return;
-        if (ghost != null)
+        if (itemElem == null) return;
+        if (rs.isDragging)
         {
-            ghostTrans = new point(pos.x - elemClickPosition.x, pos.y - elemClickPosition.y);
-            Log($"onMove ({ghostTrans.x}, {ghostTrans.y}) {ghost}");
+            shouldRender = false;
+            ghostTrans = new point(pos.x - rs.elemClickPosition.x, pos.y - rs.elemClickPosition.y);
+            Log($"onMove ({elemPosition.x}, {elemPosition.y})");
 
             // check if current drag item is over another item and swap places 
-            for(var b = 0; b < itemElem.Length; ++b)
+            for (var b = 0; b < itemElem.Count; ++b)
             {
-                if (b == elemIndex) continue;
                 var subItem = itemElem[b];
+                if (rs.originItems == Items && b == rs.elemIndex) continue;
 
-                if (await isOnTop(subItem, pos))
+                // If is on top of an element or if top top of a empty list -> confirm drag
+                if (await isOnTop(subItem, pos) ||
+                Items.Count == 0 && await isOnTop((ElementReference) sortable, pos))
                 {
                     // reorder
                     newElemIndex = b;
-                    var item = Items[elemIndex];
-                    var item2 = Items[newElemIndex];
-                    // flip
-                    if (withShadow)
+                    if (WithShadow)
                     {
-                        shouldRender = false;
-                        Items.RemoveAt(elemIndex);
-                        Items.Insert(newElemIndex, item);
-                        elemIndex = newElemIndex;
-                        shouldRender = true;
+                        rs.originItems.RemoveAt(rs.elemIndex);
+                        Items.Insert(newElemIndex, rs.selected);
+                        rs.elemIndex = newElemIndex;
+                        if (rs.originItems != Items) rs.originItems = Items;
+                        break;
                     }
-
-                    Log($"Sobre {item2}");
-                    break;
                 }
             }
 
+            shouldRender = true;
             StateHasChanged();
         }
     }
@@ -155,7 +160,8 @@
     // checks if mouse x/y is on top of an item 
     async Task<bool> isOnTop(ElementReference item, point pos)
     {
-        var box = await js.getClientRect(item);
+        var box = await rs.getClientRect(item);
+        if (box.width < 0) return false;
         Log($"\npos x: {pos.x}, y: {pos.y}\n item: left:{box.left}, width:{box.width}\nitem: top:{box.top}, height:{box.height}", true);
         var isx = (pos.x > box.left && pos.x < (box.left + box.width));
         var isy = (pos.y > box.top && pos.y < (box.top + box.height));
@@ -166,11 +172,10 @@
 
     void Log(string info, bool sublog = false)
     {
-        if (debug)
+        if (Debug)
         {
             if (sublog) log2 = info;
             else log = info;
         }
     }
-
 }
