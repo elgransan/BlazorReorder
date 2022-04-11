@@ -12,6 +12,7 @@ public class ReorderService<TItem> : IAsyncDisposable
     public TItem selected = default(TItem);
     public point elemClickPosition = new point(0, 0);
     public bool isDragging = false;
+    private bool _copy = false;
 
     public ReorderService(IJSRuntime jsRuntime)
     {
@@ -19,13 +20,22 @@ public class ReorderService<TItem> : IAsyncDisposable
                 "import", "./_content/BlazorReorderList/ReorderJsInterop.js").AsTask());
     }
 
-    public void Set(List<TItem> list, TItem item, int index, point clickPoint)
+    public void Set(List<TItem> list, TItem item, int index, point clickPoint, bool copy)
     {
         isDragging = true;
         originItems = list;
         selected = item;
         elemIndex = index;
         elemClickPosition = clickPoint;
+        _copy = copy;
+    }
+
+    // whe copy only the first time
+    public bool isCopy()
+    {
+        var tempcopy = _copy;
+        _copy = false;
+        return tempcopy;
     }
 
     public void Reset()
@@ -34,6 +44,7 @@ public class ReorderService<TItem> : IAsyncDisposable
         originItems = default(List<TItem>);
         selected = default(TItem);
         elemClickPosition = new point(0, 0);
+        _copy = false;
     }
 
     public async ValueTask initEvents(DotNetObjectReference<Reorder<TItem>> dotNetInstance)

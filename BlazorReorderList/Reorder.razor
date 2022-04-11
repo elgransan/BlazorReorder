@@ -24,7 +24,7 @@
     <div class="sortable" @ref="sortable">
         @foreach (var item in Items.Select((v, i) => (v, i)))
         {
-            <div @ref="itemElem[item.i]" class="item @(item.v.Equals(rs.selected) ? "active" : "")"
+            <div @ref="itemElem[item.i]" class="item @((object)item.v == (object)rs.selected ? "active" : "")"
             @onmousedown="async (e) => await onPress(e, item.v, item.i)">
                 @ChildContent(item.v)
             </div>
@@ -36,7 +36,7 @@
 {
     [Parameter, EditorRequired] public RenderFragment<TItem> ChildContent { get; set; } = null!;
     [Parameter, EditorRequired] public List<TItem> Items { get; set; } = null!;
-    [Parameter] public bool Copy { get; set; } = false;
+    [Parameter] public Func<TItem, TItem> Copy { get; set; }
     [Parameter] public bool WithShadow { get; set; } = true;
     [Parameter] public bool Debug { get; set; } = false;
 
@@ -84,12 +84,14 @@
     public async Task onPress(MouseEventArgs m, TItem item, int index)
     {
         if (itemElem == null) return;
+
         shouldRender = false; // Because the method triggers re-render, the click propagation is canceled, if you have a link/or any click event inside it's going to stop working
         var ghostElem = itemElem[index];
         elemWidth = await rs.getWidth(ghostElem);
         elemPosition = await rs.getPosition(ghostElem);
         clickPosition = await rs.getPoint(m);
-        rs.Set(Items, item, index, clickPosition);
+        TItem? clone = Copy != null ? Copy(item) : default(TItem);
+        rs.Set(Items, clone != null ? clone : item, index, clickPosition, clone != null);
     }
 
     [JSInvokable]
@@ -138,7 +140,8 @@
                     newElemIndex = b;
                     if (WithShadow)
                     {
-                        rs.originItems.RemoveAt(rs.elemIndex);
+                        if (!rs.isCopy())
+                            rs.originItems.RemoveAt(rs.elemIndex);
                         Items.Insert(newElemIndex, rs.selected);
                         rs.elemIndex = newElemIndex;
                         if (rs.originItems != Items) rs.originItems = Items;

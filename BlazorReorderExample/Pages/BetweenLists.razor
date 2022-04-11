@@ -3,11 +3,12 @@
 <PageTitle>Blazor Reorder Example</PageTitle>
 
 <h1>Drag between lists</h1>
-
+<input id="copy" type="checkbox" @bind="@copy" />
+<label for="copy">Copy</label>
 <div class="row">
     <div class="col-4">
         <div class="card">
-            <Reorder Items="list1" TItem="ListItem">
+            <Reorder Items="list1" TItem="ListItem" Copy='(i) => copy ? i with { title = i.title + " copy" } : null'>
                 <div class="mb-2 mx-2">
                     <h5>@context.title</h5>
                     <p>@context.details <a href="@context.url">Go</a></p>      
@@ -38,6 +39,7 @@
 </div>
 
 @code {
+    private bool copy = true;
     
     public List<ListItem> list1 = new()
     {
