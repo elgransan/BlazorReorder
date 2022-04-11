@@ -27,16 +27,20 @@ Example code:
         };
     }
 
-Here is an example:
+Basic example:
 
 ![sortable](https://user-images.githubusercontent.com/9949584/161866643-fff9989b-ca23-475d-83e0-3d80b1a77740.gif)
+
+Drag between lists:
+
+![sortable2](https://user-images.githubusercontent.com/9949584/162785267-14bed3f4-31f1-4319-876b-39e511752665.gif)
 
 ## Roadmap
 
 - [x] Basic funtionality
 - [x] Component RCL
 - [x] Easy Restyling
-- [ ] Drag & Drop between lists
+- [x] Drag & Drop between lists
 - [ ] Drag handler
 - [ ] Copy between lists
 - [ ] Callback functionality
