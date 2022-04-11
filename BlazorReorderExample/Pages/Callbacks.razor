@@ -1,0 +1,71 @@
+﻿@page "/Callbacks"
+
+<PageTitle>Blazor Reorder Example</PageTitle>
+
+<h1>Callbacks</h1>
+<div>@callback: @data</div>
+
+<div class="row">
+    <div class="col-4">
+        <div class="card">
+            <Reorder Items="list1" TItem="ItemList"
+                OnStart='(i) => { callback = "OnStart"; data = i.ToString(); }'
+                OnChange='(i) => { callback = "OnChange"; data = i.ToString(); }'
+                OnFinish='(i) => { callback = "OnFinish"; data = i.ToString(); }'>
+                <div class="mb-2 mx-2">
+                    <h5>@context.title</h5>
+                    <p>@context.details</p>      
+                </div>
+            </Reorder>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card">
+            <Reorder Items="list2" TItem="ItemList"
+                OnStart='(i) => i.domClass = "bg-danger"'
+                OnChange='(i) => i.domClass = "bg-info"'
+                OnFinish='(i) => i.domClass = "bg-success"'>
+                <div class="mb-2 mx-2">
+                    <h5>@context.title</h5>
+                    <p class="@context.domClass">@context.details</p>      
+                </div>
+            </Reorder>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card">
+            <Reorder Items="list3" TItem="ItemList">
+                <div class="mb-2 mx-2">
+                    <h5>@context.title</h5>
+                    <p>@context.details</p>      
+                </div>
+            </Reorder>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string callback = "";
+    private string data = "";
+    
+    public List<ItemList> list1 = new()
+    {
+        new ItemList("Google", "Again looking for a bug ..."),
+        new ItemList("StackOverflow", "Could be this the solution?"),
+        new ItemList("GitHub", "Let's get awesome code"),
+        new ItemList("Twitter", "I want to rest"),
+        new ItemList("Another", "The solution must be somewhere!!!")
+    };
+    
+    public List<ItemList> list2 = new()
+    {
+        new ItemList("Facebook", "Meta"),
+        new ItemList("Instagram", "Meta"),
+        new ItemList("Whatsapp", "Meta"),
+    };
+
+    public List<ItemList> list3 = new()
+    {
+        new ItemList("Oculus", "Meta"),
+    };
+}

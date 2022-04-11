@@ -15,4 +15,10 @@
     <ProjectReference Include="..\BlazorReorderList\BlazorReorderList.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Pages\Callbacks.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>
