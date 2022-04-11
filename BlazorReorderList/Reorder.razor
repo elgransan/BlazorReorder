@@ -5,12 +5,6 @@
 @inject NavigationManager nav
 @implements IDisposable
 
-@if (Debug)
-{
-    <p>@log</p>
-    <p>@log2</p>
-}
-
 @if(rs.isDragging && elemPosition.x != -1000)
 {
     <div class="dragging item" 
@@ -37,8 +31,10 @@
     [Parameter, EditorRequired] public RenderFragment<TItem> ChildContent { get; set; } = null!;
     [Parameter, EditorRequired] public List<TItem> Items { get; set; } = null!;
     [Parameter] public Func<TItem, TItem> Copy { get; set; }
+    [Parameter] public EventCallback<TItem> OnStart { get; set; }
+    [Parameter] public EventCallback<TItem> OnChange { get; set; }
+    [Parameter] public EventCallback<TItem> OnFinish { get; set; }
     [Parameter] public bool WithShadow { get; set; } = true;
-    [Parameter] public bool Debug { get; set; } = false;
 
     private bool shouldRender = true; // cancel re-rendering
     private DotNetObjectReference<Reorder<TItem>>? dotNetHelper; //js-interop 2-ways
@@ -49,8 +45,6 @@
     point clickPosition = new point(0, 0);
     int elemWidth = 0;
     int newElemIndex = -1;
-
-    string log = "", log2 = "";
 
     protected override void OnInitialized()
     {
@@ -92,14 +86,16 @@
         clickPosition = await rs.getPoint(m);
         TItem? clone = Copy != null ? Copy(item) : default(TItem);
         rs.Set(Items, clone != null ? clone : item, index, clickPosition, clone != null);
+        await OnStart.InvokeAsync(rs.selected);
     }
 
     [JSInvokable]
-    public void onRelease(MouseEventArgs m)
+    public async Task onRelease(MouseEventArgs m)
     {
         elemPosition = new point(-1000, 0);
         if (rs.isDragging && rs.originItems == Items)
         {
+            await OnFinish.InvokeAsync(rs.selected);
             rs.Reset();
 
             // flip
@@ -109,7 +105,6 @@
                 shouldRender = false;
                 Items.RemoveAt(rs.elemIndex);
                 Items.Insert(newElemIndex, item);
-                Log("mouseup");
             }
             shouldRender = true;
         }
@@ -124,7 +119,6 @@
         {
             shouldRender = false;
             ghostTrans = new point(pos.x - rs.elemClickPosition.x, pos.y - rs.elemClickPosition.y);
-            Log($"onMove ({elemPosition.x}, {elemPosition.y})");
 
             // check if current drag item is over another item and swap places 
             for (var b = 0; b < itemElem.Count; ++b)
@@ -145,6 +139,7 @@
                         Items.Insert(newElemIndex, rs.selected);
                         rs.elemIndex = newElemIndex;
                         if (rs.originItems != Items) rs.originItems = Items;
+                        await OnChange.InvokeAsync(rs.selected);
                         break;
                     }
                 }
@@ -165,20 +160,10 @@
     {
         var box = await rs.getClientRect(item);
         if (box.width < 0) return false;
-        Log($"\npos x: {pos.x}, y: {pos.y}\n item: left:{box.left}, width:{box.width}\nitem: top:{box.top}, height:{box.height}", true);
         var isx = (pos.x > box.left && pos.x < (box.left + box.width));
         var isy = (pos.y > box.top && pos.y < (box.top + box.height));
         var res = isx && isy;
 
         return res;
-    }
-
-    void Log(string info, bool sublog = false)
-    {
-        if (Debug)
-        {
-            if (sublog) log2 = info;
-            else log = info;
-        }
     }
 }
