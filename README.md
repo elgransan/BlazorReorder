@@ -57,7 +57,7 @@ Drag between lists:
 - [x] Drag & Drop between lists
 - [X] Copy between lists
 - [X] Callback functionality (OnStart, OnChange, OnFinish)
-- [ ] Properties: Disabled, DisableDrop, DisableDrag
+- [x] Properties: Disabled, DisableDrop, DisableDrag
 - [ ] Drag handler
 - [ ] Documentation
 - [ ] Create Public Nuget Package
