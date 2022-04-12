@@ -1,11 +1,25 @@
 # Blazor Reorder
 
-A Drag and Drop sortable list built in Blazor. It only uses javascript for trigger events and get element information (that in NET 6 it's impossible to do it direct from Blazor)
+### Disclaimer
+This component is in development, still can suffer big modifications that can affect functionality
+
+## Intro
+A Drag and Drop sortable list built in Blazor. It only uses javascript for trigger events and get element information (that in NET 6 it's impossible to do it directly from Blazor)
 
 The Reorder Component is a RCL so you can install it as nuget package or you can reference the source code project
 
-Example code:
+### Example code:
 
+**Program.cs**
+
+    // Add this lines
+    builder.Services.AddScoped<BlazorReorderList.ReorderService<ListItem>>();
+    public record ListItem(string title, string url, string details);
+
+
+**Example.razor**
+    
+    @page "/example"
     <div class="card">
         <Reorder Items="list" TItem="ListItem">
             <div class="mb-2 mx-2">
@@ -41,10 +55,11 @@ Drag between lists:
 - [x] Component RCL
 - [x] Easy Restyling
 - [x] Drag & Drop between lists
-- [ ] Drag handler
 - [X] Copy between lists
 - [X] Callback functionality (OnStart, OnChange, OnFinish)
-- [ ] Code cleanup
+- [ ] Properties: Disabled, DisableDrop, DisableDrag
+- [ ] Drag handler
 - [ ] Documentation
 - [ ] Create Public Nuget Package
-- [ ] Properties: Disabled, DisableDrop, DisableDrag
+- [ ] Page service (insted scoped)
+- [ ] Code cleanup
