@@ -4,20 +4,31 @@ using Microsoft.JSInterop;
 
 namespace BlazorReorderList;
 
-public class ReorderService<TItem> : IAsyncDisposable
+public class ReorderService<TItem> : IReorderService<TItem>
 {
-    private readonly Lazy<Task<IJSObjectReference>> moduleTask;
-    public List<TItem>? originItems;
-    public int elemIndex = -1;
-    public TItem selected = default(TItem);
-    public point elemClickPosition = new point(0, 0);
-    public bool isDragging = false;
+    public bool isDragging { get; set; } = false;
+    public TItem? selected { get; set; } = default;
+    public List<TItem>? originItems { get; set; }
+    public int elemIndex { get; set; } = -1;
+    public point elemClickPosition { get; set; } = new point(0, 0);
+
+    private Lazy<Task<IJSObjectReference>> moduleTask;
     private bool _copy = false;
 
     public ReorderService(IJSRuntime jsRuntime)
     {
         moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
                 "import", "./_content/BlazorReorderList/ReorderJsInterop.js").AsTask());
+    }
+
+    public ReorderService() { }
+
+    public ReorderService<TItem> InitService(IJSRuntime jsRuntime)
+    {
+        moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
+                "import", "./_content/BlazorReorderList/ReorderJsInterop.js").AsTask());
+
+        return this;
     }
 
     public void Set(List<TItem> list, TItem item, int index, point clickPoint, bool copy)
@@ -41,8 +52,8 @@ public class ReorderService<TItem> : IAsyncDisposable
     public void Reset()
     {
         isDragging = false;
-        originItems = default(List<TItem>);
-        selected = default(TItem);
+        originItems = default;
+        selected = default;
         elemClickPosition = new point(0, 0);
         _copy = false;
     }
