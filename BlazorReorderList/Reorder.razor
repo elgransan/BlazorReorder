@@ -34,6 +34,9 @@
     [Parameter] public EventCallback<TItem> OnStart { get; set; }
     [Parameter] public EventCallback<TItem> OnChange { get; set; }
     [Parameter] public EventCallback<TItem> OnFinish { get; set; }
+    [Parameter] public bool Disabled { get; set; } = false;
+    [Parameter] public bool DisableDrop { get; set; } = false;
+    [Parameter] public bool DisableDrag { get; set; } = false;
     [Parameter] public bool WithShadow { get; set; } = true;
 
     private bool shouldRender = true; // cancel re-rendering
@@ -77,6 +80,7 @@
 
     public async Task onPress(MouseEventArgs m, TItem item, int index)
     {
+        if (Disabled || DisableDrag) return;
         if (itemElem == null) return;
 
         shouldRender = false; // Because the method triggers re-render, the click propagation is canceled, if you have a link/or any click event inside it's going to stop working
@@ -123,6 +127,7 @@
             // check if current drag item is over another item and swap places 
             for (var b = 0; b < itemElem.Count; ++b)
             {
+                if (Disabled || DisableDrop) break;
                 var subItem = itemElem[b];
                 if (rs.originItems == Items && b == rs.elemIndex) continue;
 
