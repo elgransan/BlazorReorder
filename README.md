@@ -57,6 +57,7 @@ Drag between lists:
 - [x] Basic funtionality
 - [x] Component RCL
 - [x] Easy Restyling
+- [x] Touch Events Mobile experience 
 - [x] Drag & Drop between lists
 - [X] Copy between lists
 - [X] Callback functionality (OnStart, OnChange, OnFinish)
