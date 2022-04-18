@@ -18,7 +18,7 @@
     <div class="sortable" @ref="sortable">
         @foreach (var item in Items.Select((v, i) => (v, i)))
         {
-            <div @ref="itemElem[item.i]" class="item @((object)item.v == (object)rs.selected ? "active" : "")"
+            <div @ref="itemElem[item.i]" @key="item.i" class="item @((object)item.v == (object)rs.selected ? "active" : "")"
             @onmousedown="async (e) => await onPress(e, item.v, item.i)">
                 @ChildContent(item.v)
             </div>

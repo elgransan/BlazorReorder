@@ -74,7 +74,7 @@ public class ReorderService<TItem> : IAsyncDisposable
     public async ValueTask<point> getPoint(MouseEventArgs ev)
     {
         var module = await moduleTask.Value;
-        return await module.InvokeAsync<point>("getPoint", ev);
+        return await module.InvokeAsync<point>("getPoint", ev.PageX, ev.PageY, ev.ClientX, ev.ClientY);
     }
 
     public async ValueTask<clientRect> getClientRect(ElementReference el)
