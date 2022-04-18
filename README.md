@@ -3,6 +3,9 @@
 ### Disclaimer
 This component is in development, still can suffer big modifications that can affect functionality
 
+### Live Examples
+https://elgransan.github.io/BlazorReorder
+
 ## Intro
 A Drag and Drop sortable list built in Blazor. It only uses javascript for trigger events and get element information (that in NET 6 it's impossible to do it directly from Blazor)
 
