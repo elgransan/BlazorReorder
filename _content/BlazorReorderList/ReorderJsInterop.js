@@ -5,11 +5,11 @@ var _w = window,
 var dotNetInstance = [];
 
 // get position of mouse/touch in relation to viewport 
-export function getPoint(e) {
+export function getPoint(pageX, pageY, clientX, clientY) {
     var scrollX = Math.max(0, _w.pageXOffset || _d.scrollLeft || _b.scrollLeft || 0) - (_d.clientLeft || 0),
         scrollY = Math.max(0, _w.pageYOffset || _d.scrollTop || _b.scrollTop || 0) - (_d.clientTop || 0),
-        pointX = e ? (Math.max(0, e.pageX || e.clientX || 0) - scrollX) : 0,
-        pointY = e ? (Math.max(0, e.pageY || e.clientY || 0) - scrollY) : 0;
+        pointX = Math.max(0, pageX || clientX || 0) - scrollX,
+        pointY = Math.max(0, pageY || clientY || 0) - scrollY;
 
     return { x: pointX, y: pointY };
 }
@@ -30,7 +30,7 @@ export function removeEvents(dotNet) {
 
 // only invoke events form the collection
 function onMove(e) {
-    var point = getPoint(e);
+    var point = getPoint(e.pageX, e.pageY, e.clientX, e.clientY);
     for (var i = 0; i < dotNetInstance.length; i++) {
         dotNetInstance[i].invokeMethodAsync("onMove", point);
     }
