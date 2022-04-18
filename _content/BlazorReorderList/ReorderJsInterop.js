@@ -30,7 +30,8 @@ export function removeEvents(dotNet) {
 
 // only invoke events form the collection
 function onMove(e) {
-    var point = getPoint(e.pageX, e.pageY, e.clientX, e.clientY);
+    var p = e.touches && e.touches.length > 0 ? e.touches[0] : e;
+    var point = getPoint(p.pageX, p.pageY, p.clientX, p.clientY);
     for (var i = 0; i < dotNetInstance.length; i++) {
         dotNetInstance[i].invokeMethodAsync("onMove", point);
     }
