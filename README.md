@@ -62,8 +62,8 @@ Drag between lists:
 - [X] Copy between lists
 - [X] Callback functionality (OnStart, OnChange, OnFinish)
 - [x] Properties: Disabled, DisableDrop, DisableDrag
-- [ ] Drag handler
+- [x] Drag handler
+- [ ] Page service (insted scoped)
 - [ ] Documentation
 - [ ] Create Public Nuget Package
-- [ ] Page service (insted scoped)
 - [ ] Code cleanup
