@@ -2,17 +2,20 @@
 
 <PageTitle>Blazor Reorder Example</PageTitle>
 
-<h1>Custom styles</h1>
-
-Welcome to your new reorderer list.
+<h1>Custom styles and drag handler</h1>
 
 <p>Deny Drag: @denyDrag</p>
 
 <div class="card">
     <Reorder Items="list" TItem="ListItem" DisableDrag="denyDrag">
-        <div class="mb-2 mx-2">
-            <h5 @onmousedown="() => denyDrag = false" @onmouseup="() => denyDrag = true">@context.title</h5>
-            <p>@context.details <a href="@context.url">Go</a></p>      
+        <div class="row mb-2 mx-2">
+            <div class="col-auto align-middle" style="line-height: 72px;" @onmousedown="() => denyDrag = false" @onmouseup="() => denyDrag = true">
+                <i class="oi oi-grid-three-up"></i>
+            </div>
+            <div class="col" style="cursor: default;">
+                <h5>@context.title</h5>
+                <p>@context.details <a href="@context.url">Go</a></p>      
+            </div>
         </div>
     </Reorder>
 </div>
