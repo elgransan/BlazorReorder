@@ -6,7 +6,7 @@
 @inject IJSRuntime JS;
 @implements IDisposable
 
-@if(rs != null && rs.isDragging && elemPosition.x != -1000)
+@if(rs != null && rs.selected != null && rs.isDragging && elemPosition.x != -1000)
 {
     <div class="dragging item" 
          style="width: @(elemWidth)px; left: @(elemPosition.x)px; top: @(elemPosition.y)px; transform: translateX(@(ghostTrans.x)px) translateY(@(ghostTrans.y)px )">
@@ -14,7 +14,7 @@
     </div>
 }
 
-@if (rs != null && itemElem != null)
+@if (rs != null && rs.selected != null && itemElem != null)
 {
     <div class="sortable" @ref="sortable">
         @foreach (var item in Items.Select((v, i) => (v, i)))
@@ -77,7 +77,9 @@
         if (firstRender)
         {
             // set if is using scoped service or page service
-            rs = (IReorderService<TItem>) ServiceProvider.GetService(typeof(IReorderService<TItem>));
+            var provider = ServiceProvider.GetService(typeof(IReorderService<TItem>));
+            if (provider != null)
+                rs = (IReorderService<TItem>)provider;
             if (rs == null && ReorderService != null) rs = ReorderService.InitService(JS);
             if (rs == null) return;
             dotNetHelper = DotNetObjectReference.Create(this);
@@ -104,7 +106,7 @@
     public async Task onTouch(TouchEventArgs m, TItem item, int index)
     {
         if (Disabled || DisableDrag) return;
-        if (itemElem == null) return;
+        if (itemElem == null || rs == null) return;
 
         shouldRender = false; // Because the method triggers re-render, the click propagation is canceled, if you have a link/or any click event inside it's going to stop working
         var ghostElem = itemElem[index];
@@ -143,7 +145,7 @@
     [JSInvokable]
     public async Task onMove(point pos)
     {
-        if (itemElem == null || rs == null) return;
+        if (itemElem == null || rs == null || rs.originItems == null || rs.selected == null) return;
         if (rs.isDragging)
         {
             shouldRender = false;

@@ -4,15 +4,15 @@
 
 <h1>Callbacks</h1>
 <p>Callbacks and page level service</p>
-<div>@callback: @data</div>
+<div>@callback @data</div>
 
 <div class="row">
     <div class="col-4">
         <div class="card">
             <Reorder Items="list1" TItem="ItemList" ReorderService="rs"
-                OnStart='(i) => { callback = "OnStart"; data = i.ToString(); }'
-                OnChange='(i) => { callback = "OnChange"; data = i.ToString(); }'
-                OnFinish='(i) => { callback = "OnFinish"; data = i.ToString(); }'>
+                OnStart='(i) => { callback = "OnStart"; data = i.ToString() ?? ""; }'
+                OnChange='(i) => { callback = "OnChange"; data = i.ToString() ?? ""; }'
+                OnFinish='(i) => { callback = "OnFinish"; data = i.ToString() ?? ""; }'>
                 <div class="mb-2 mx-2">
                     <h5>@context.title</h5>
                     <p>@context.details</p>      

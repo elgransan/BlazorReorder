@@ -12,7 +12,7 @@ namespace BlazorReorderList
         int elemIndex { get; set; }
         point elemClickPosition { get; set; }
         ValueTask<clientRect> getClientRect(ElementReference el);
-        ValueTask<point> getPoint(MouseEventArgs ev);
+        ValueTask<point> getPoint(double PageX, double PageY, double ClientX, double ClientY);
         ValueTask<point> getPosition(ElementReference el);
         ValueTask<int> getWidth(ElementReference el);
         ValueTask initEvents(DotNetObjectReference<Reorder<TItem>> dotNetInstance);
