@@ -9,12 +9,14 @@
 <div class="card">
     <Reorder Items="list" TItem="ListItem" DisableDrag="denyDrag">
         <div class="row mb-2 mx-2">
-            <div class="col-auto align-middle" style="line-height: 72px;" @onmousedown="() => denyDrag = false" @onmouseup="() => denyDrag = true">
+            <div class="col-auto align-middle" style="line-height: 72px;" 
+            @onmousedown="() => denyDrag = false" @onmouseup="() => denyDrag = true"
+            @ontouchstart="() => denyDrag = false" @ontouchend="() => denyDrag = true">
                 <i class="oi oi-grid-three-up"></i>
             </div>
             <div class="col" style="cursor: default;">
                 <h5>@context.title</h5>
-                <p>@context.details <a href="@context.url">Go</a></p>      
+                <p>@context.details <a href="@context.url">Go</a></p>
             </div>
         </div>
     </Reorder>
