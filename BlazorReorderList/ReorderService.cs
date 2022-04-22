@@ -60,49 +60,49 @@ public class ReorderService<TItem> : IReorderService<TItem>
 
     public async ValueTask initEvents(DotNetObjectReference<Reorder<TItem>> dotNetInstance)
     {
-        if (_moduleTask == null) throw new Exception("Reorder Component: JS module not initializated");
+        if (_moduleTask == null) throw new Exception("Blazor Reorder: JS module not initializated");
         var module = await _moduleTask.Value;
         await module.InvokeVoidAsync("initEvents", dotNetInstance);
     }
 
     public async ValueTask removeEvents(DotNetObjectReference<Reorder<TItem>> dotNetInstance)
     {
-        if (_moduleTask == null) throw new Exception("Reorder Component: JS module not initializated");
+        if (_moduleTask == null) throw new Exception("Blazor Reorder: JS module not initializated");
         var module = await _moduleTask.Value;
         await module.InvokeVoidAsync("removeEvents", dotNetInstance);
     }
 
     public async ValueTask<int> getWidth(ElementReference el)
     {
-        if (_moduleTask == null) throw new Exception("Reorder Component: JS module not initializated");
+        if (_moduleTask == null) throw new Exception("Blazor Reorder: JS module not initializated");
         var module = await _moduleTask.Value;
         return await module.InvokeAsync<int>("getWidth", el);
     }
 
     public async ValueTask<point> getPosition(ElementReference el)
     {
-        if (_moduleTask == null) throw new Exception("Reorder Component: JS module not initializated");
+        if (_moduleTask == null) throw new Exception("Blazor Reorder: JS module not initializated");
         var module = await _moduleTask.Value;
         return await module.InvokeAsync<point>("getPosition", el);
     }
 
     public async ValueTask<point> getPoint(double pageX, double pageY, double clientX, double clientY)
     {
-        if (_moduleTask == null) throw new Exception("Reorder Component: JS module not initializated");
+        if (_moduleTask == null) throw new Exception("Blazor Reorder: JS module not initializated");
         var module = await _moduleTask.Value;
         return await module.InvokeAsync<point>("getPoint", pageX, pageY, clientX, clientY);
     }
 
     public async ValueTask<clientRect> getClientRect(ElementReference el)
     {
-        if (_moduleTask == null) throw new Exception("Reorder Component: JS module not initializated");
+        if (_moduleTask == null) throw new Exception("Blazor Reorder: JS module not initializated");
         var module = await _moduleTask.Value;
         return await module.InvokeAsync<clientRect>("getClientRect", el);
     }
 
     public async ValueTask DisposeAsync()
     {
-        if (_moduleTask == null) throw new Exception("Reorder Component: JS module not initializated");
+        if (_moduleTask == null) throw new Exception("Blazor Reorder: JS module not initializated");
         if (_moduleTask.IsValueCreated)
         {
             var module = await _moduleTask.Value;
