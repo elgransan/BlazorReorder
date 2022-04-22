@@ -7,15 +7,15 @@
   "linkerEnabled": true,
   "resources": {
     "assembly": {
-      "BlazorReorderExample.dll": "sha256-GCBUMNZPAGjtFKkZACQoXpgSA8qkaNK5Q3X0qnxWIF0=",
-      "BlazorReorderList.dll": "sha256-xyJZn0DptvIQk5uNKK2qmnMKCmBUwqPy2LpcJVh\/AnI=",
+      "BlazorReorderExample.dll": "sha256-A7QbvEZi8UUm8f84hhKsl3dqtKt3AJ4UH200SaFVmNU=",
+      "BlazorReorderList.dll": "sha256-V8lihCpzjF9CYhGLNK8fRKjaLNF2bh\/Qtg7iFnbDhBw=",
       "Microsoft.AspNetCore.Components.dll": "sha256-YLxxL55wP4XPZQwke6yx34khIAzatZJ\/mSLePGcH3ak=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-xxCvU9afx7jWCN48HLA8JUeWL7MME8asyDIvZqZ7sgM=",
       "Microsoft.AspNetCore.Components.WebAssembly.dll": "sha256-yUU\/mWWa82QWVsGQj6w\/j4ja+GJcNtYn9qS4hbsDCPU=",
       "Microsoft.Extensions.Configuration.Abstractions.dll": "sha256-zhFtW4kE16TdrpPne9I1Cu9o0KYzrS50VE9MVSifJg4=",
       "Microsoft.Extensions.Configuration.dll": "sha256-QPR+1IXNcA28b\/gXw3uZ8aRigHIZUJ1KWSH02kkCg7Q=",
       "Microsoft.Extensions.Configuration.Json.dll": "sha256-fF3xaP+hT6R3GYUctLIY1ixaXQ8mrHzwWHHf2dKfueU=",
-      "Microsoft.Extensions.DependencyInjection.Abstractions.dll": "sha256-MEHKc0M7hYiABomb4CHQOjBIMPiLza7jH33FpD8DiFQ=",
+      "Microsoft.Extensions.DependencyInjection.Abstractions.dll": "sha256-t0JzUWML91xC8LdLnAcXokkNfhoGirxMlKBHmtX+rQc=",
       "Microsoft.Extensions.DependencyInjection.dll": "sha256-pYDNELbgbO60zgvgH5SP8004wkA0+o\/KlQxFXl\/uS2A=",
       "Microsoft.Extensions.Logging.Abstractions.dll": "sha256-zQpQAjCuRNbR0+p7WZpv+Y63j2yQXMTcnawYv\/cSp5Q=",
       "Microsoft.Extensions.Logging.dll": "sha256-aj8Tk1BLrOE4y41oBvw\/VGDdmvACVEpGmiEDNrA7Hco=",
@@ -34,7 +34,7 @@
       "System.Private.Runtime.InteropServices.JavaScript.dll": "sha256-HY2+e3GfJejIUbHo8GiN6j8zhN3YQJ\/6pphg7xhGsbc=",
       "System.Private.Uri.dll": "sha256-ZPlSzfT59anfmo24mKFmkrf1PQunYIoS4C4YjTeae+I=",
       "System.Runtime.CompilerServices.Unsafe.dll": "sha256-pboIs9f2VIFXqCFHxgzhAkwhq+Vjkbm4tbx1jlqlCAs=",
-      "System.Runtime.dll": "sha256-ta3uzfCw21btJzFMmb27veB\/OEgyJ+dQxINIx1599D0=",
+      "System.Runtime.dll": "sha256-pS0B66f1ubgNLwFwEmm4CkHkt4E8EVAfi1KOpQBqZns=",
       "System.Text.Encodings.Web.dll": "sha256-2bylgJUiQjpqubbK7zSJaLR20rsotQrg2r0Z9\/Mj7AE=",
       "System.Text.Json.dll": "sha256-dAChizKNtsM9UdPWGH26oySUOaEBzW1fYsPOFbLXXCE="
     },
