@@ -1,7 +1,6 @@
 # Blazor Reorder
 
-### Disclaimer
-This component is in development, still can suffer big modifications that can affect functionality
+<a href="https://www.nuget.org/packages/Reorder/1.0.0"><img src="https://img.shields.io/nuget/v/Reorder?style=flat-square" alt="Download Reorder"/></a>
 
 ### Live Examples
 https://elgransan.github.io/BlazorReorder
@@ -64,6 +63,6 @@ Drag between lists:
 - [x] Properties: Disabled, DisableDrop, DisableDrag
 - [x] Drag handler
 - [x] Page service (insted scoped)
+- [x] Create Public Nuget Package
+- [x] Code cleanup
 - [ ] Documentation
-- [ ] Create Public Nuget Package
-- [ ] Code cleanup
