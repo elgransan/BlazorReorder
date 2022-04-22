@@ -6,10 +6,12 @@
 
 Welcome to your new reorderer list.
 
+<p>Deny Drag: @denyDrag</p>
+
 <div class="card">
-    <Reorder Items="list" TItem="ListItem">
+    <Reorder Items="list" TItem="ListItem" DisableDrag="denyDrag">
         <div class="mb-2 mx-2">
-            <h5>@context.title</h5>
+            <h5 @onmousedown="() => denyDrag = false" @onmouseup="() => denyDrag = true">@context.title</h5>
             <p>@context.details <a href="@context.url">Go</a></p>      
         </div>
     </Reorder>
@@ -17,6 +19,7 @@ Welcome to your new reorderer list.
 
 @code
 {
+    bool denyDrag = true;
     public List<ListItem> list = new()
     {
         new ListItem("Google", "https://google.com", "Again looking for a bug ..."),
