@@ -4,8 +4,15 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <PackageId>Reorder</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Santiago Cattaneo</Authors>
+    <projectUrl>https://github.com/elgransan/BlazorReorder</projectUrl>
+    <description>Drag and Drop Reorder List for Blazor, with the less JS interop possible</description>
+    <releaseNotes>First version</releaseNotes>
+    <copyright>2022</copyright>
+    <tags>Blazor RCL</tags>
   </PropertyGroup>
-
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />

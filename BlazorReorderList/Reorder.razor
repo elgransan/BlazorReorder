@@ -38,7 +38,6 @@
     [Parameter] public bool Disabled { get; set; } = false;
     [Parameter] public bool DisableDrop { get; set; } = false;
     [Parameter] public bool DisableDrag { get; set; } = false;
-    [Parameter] public bool WithShadow { get; set; } = true;
     [Parameter] public ReorderService<TItem>? ReorderService { get; set; }
 
     private bool shouldRender = true; // cancel re-rendering
@@ -49,7 +48,6 @@
     point ghostTrans = new point(0, 0);
     point clickPosition = new point(0, 0);
     int elemWidth = 0;
-    int newElemIndex = -1;
     private IReorderService<TItem>? rs;
 
     protected override void OnInitialized()
@@ -81,7 +79,7 @@
             if (provider != null)
                 rs = (IReorderService<TItem>)provider;
             if (rs == null && ReorderService != null) rs = ReorderService.InitService(JS);
-            if (rs == null) return;
+            if (rs == null) throw new Exception("Blazor Reorder: Service not initialized");
             dotNetHelper = DotNetObjectReference.Create(this);
             await rs.initEvents(dotNetHelper);
             StateHasChanged();
@@ -124,15 +122,6 @@
         {
             await OnFinish.InvokeAsync(rs.selected);
             rs.Reset();
-
-            // flip
-            if (!WithShadow)
-            {
-                var item = Items[rs.elemIndex];
-                shouldRender = false;
-                Items.RemoveAt(rs.elemIndex);
-                Items.Insert(newElemIndex, item);
-            }
             shouldRender = true;
         }
         StateHasChanged();
@@ -148,28 +137,24 @@
             ghostTrans = new point(pos.x - rs.elemClickPosition.x, pos.y - rs.elemClickPosition.y);
 
             // check if current drag item is over another item and swap places 
-            for (var b = 0; b < itemElem.Count; ++b)
+            for (var i = 0; i < itemElem.Count; i++)
             {
                 if (Disabled || DisableDrop) break;
-                var subItem = itemElem[b];
-                if (rs.originItems == Items && b == rs.elemIndex) continue;
+                var subItem = itemElem[i];
+                if (rs.originItems == Items && i == rs.elemIndex) continue;
 
                 // If is on top of an element or if top top of a empty list -> confirm drag
                 if (await isOnTop(subItem, pos) ||
                 Items.Count == 0 && await isOnTop((ElementReference) reorder, pos))
                 {
                     // reorder
-                    newElemIndex = b;
-                    if (WithShadow)
-                    {
-                        if (!rs.isCopy())
-                            rs.originItems.RemoveAt(rs.elemIndex);
-                        Items.Insert(newElemIndex, rs.selected);
-                        rs.elemIndex = newElemIndex;
-                        if (rs.originItems != Items) rs.originItems = Items;
-                        await OnChange.InvokeAsync(rs.selected);
-                        break;
-                    }
+                    if (!rs.isCopy())
+                        rs.originItems.RemoveAt(rs.elemIndex);
+                    Items.Insert(i, rs.selected);
+                    rs.elemIndex = i;
+                    if (rs.originItems != Items) rs.originItems = Items;
+                    await OnChange.InvokeAsync(rs.selected);
+                    break;
                 }
             }
 
