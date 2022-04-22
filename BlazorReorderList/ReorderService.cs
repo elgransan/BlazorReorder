@@ -82,10 +82,10 @@ public class ReorderService<TItem> : IReorderService<TItem>
         return await module.InvokeAsync<point>("getPosition", el);
     }
 
-    public async ValueTask<point> getPoint(MouseEventArgs ev)
+    public async ValueTask<point> getPoint(double PageX, double PageY, double ClientX, double ClientY)
     {
         var module = await moduleTask.Value;
-        return await module.InvokeAsync<point>("getPoint", ev);
+        return await module.InvokeAsync<point>("getPoint", PageX, PageY, ClientX, ClientY);
     }
 
     public async ValueTask<clientRect> getClientRect(ElementReference el)

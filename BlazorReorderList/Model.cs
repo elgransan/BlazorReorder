@@ -1,5 +1,5 @@
 ﻿namespace BlazorReorderList;
 
-public record point(int x, int y);
-public record clientRect(float left, float top, float right, float bottom, float x, float y, float width, float height);
+public record point(double x, double y);
+public record clientRect(double left, double top, double right, double bottom, double x, double y, double width, double height);
 

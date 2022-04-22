@@ -2,6 +2,8 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: none;
 }
 
 h1:focus {

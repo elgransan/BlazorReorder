@@ -3,6 +3,9 @@
 ### Disclaimer
 This component is in development, still can suffer big modifications that can affect functionality
 
+### Live Examples
+https://elgransan.github.io/BlazorReorder
+
 ## Intro
 A Drag and Drop sortable list built in Blazor. It only uses javascript for trigger events and get element information (that in NET 6 it's impossible to do it directly from Blazor)
 
@@ -54,12 +57,13 @@ Drag between lists:
 - [x] Basic funtionality
 - [x] Component RCL
 - [x] Easy Restyling
+- [x] Touch Events Mobile experience 
 - [x] Drag & Drop between lists
 - [X] Copy between lists
 - [X] Callback functionality (OnStart, OnChange, OnFinish)
 - [x] Properties: Disabled, DisableDrop, DisableDrag
-- [ ] Drag handler
+- [x] Drag handler
+- [ ] Page service (insted scoped)
 - [ ] Documentation
 - [ ] Create Public Nuget Package
-- [ ] Page service (insted scoped)
 - [ ] Code cleanup
