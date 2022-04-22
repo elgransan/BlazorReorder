@@ -1,21 +1,21 @@
-.sortable {
+.reorder {
     min-height: 10px;
 }
 
-.item {
-  cursor: move;
-  user-select: none;
+.reorder-item {
+    cursor: move;
+    user-select: none;
 }
 
-.item:hover {
-  background: #ffffe0;
+    .reorder-item:hover {
+        background: #ffffe0;
+    }
+
+.reorder-item-active {
+    background: #ccc;
 }
 
-.active {
-  background: #ccc;
-}
-
-.dragging {
+.reorder-item-dragging {
     background: #e0ffff;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     opacity: 0.8;
@@ -23,6 +23,6 @@
     z-index: 999;
 }
 
-    .dragging:hover {
+    .reorder-item-dragging:hover {
         background: #e0ffff;
     }

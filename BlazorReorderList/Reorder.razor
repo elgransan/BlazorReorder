@@ -8,7 +8,7 @@
 
 @if(rs != null && rs.selected != null && rs.isDragging && elemPosition.x != -1000)
 {
-    <div class="dragging item" 
+    <div class="reorder-item-dragging reorder-item" 
          style="width: @(elemWidth)px; left: @(elemPosition.x)px; top: @(elemPosition.y)px; transform: translateX(@(ghostTrans.x)px) translateY(@(ghostTrans.y)px )">
     @ChildContent(rs.selected)
     </div>
@@ -16,10 +16,10 @@
 
 @if (rs != null && itemElem != null)
 {
-    <div class="sortable" @ref="sortable">
+    <div class="reorder" @ref="reorder">
         @foreach (var item in Items.Select((v, i) => (v, i)))
         {
-            <div @ref="itemElem[item.i]" @key="item.i" class="item @(rs.selected != null && (object)item.v == (object)rs.selected ? "active" : "")"
+            <div @ref="itemElem[item.i]" @key="item.i" class="reorder-item @(rs.selected != null && (object)item.v == (object)rs.selected ? "reorder-item-active" : "")"
             @onmousedown="async (e) => await onPress(e, item.v, item.i)" @ontouchstart="async (e) => await onTouch(e, item.v, item.i)">
                 @ChildContent(item.v)
             </div>
@@ -44,7 +44,7 @@
     private bool shouldRender = true; // cancel re-rendering
     private DotNetObjectReference<Reorder<TItem>>? dotNetHelper; //js-interop 2-ways
     Dictionary<int, ElementReference> itemElem = new();
-    ElementReference sortable;
+    ElementReference reorder;
     point elemPosition = new point(-1000, 0);
     point ghostTrans = new point(0, 0);
     point clickPosition = new point(0, 0);
@@ -156,7 +156,7 @@
 
                 // If is on top of an element or if top top of a empty list -> confirm drag
                 if (await isOnTop(subItem, pos) ||
-                Items.Count == 0 && await isOnTop((ElementReference) sortable, pos))
+                Items.Count == 0 && await isOnTop((ElementReference) reorder, pos))
                 {
                     // reorder
                     newElemIndex = b;

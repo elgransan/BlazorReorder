@@ -1,17 +1,17 @@
-﻿::deep .item {
+﻿::deep .reorder-item {
     cursor: move;
     user-select: none;
 }
 
-    ::deep .item:hover {
+    ::deep .reorder-item:hover {
         background: #4cff00;
     }
 
-::deep .active {
+::deep .reorder-item-active {
     background: #b200ff;
 }
 
-::deep .dragging {
+::deep .reorder-item-dragging {
     background: #ffd800;
     box-shadow: 0 4px 20px #ffd800AA;
     opacity: 0.8;
@@ -19,6 +19,6 @@
     z-index: 999;
 }
 
-    ::deep .dragging:hover {
+    ::deep .reorder-item-dragging:hover {
         background: #ffd800;
     }
