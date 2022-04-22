@@ -1,20 +1,20 @@
 @import '_content/BlazorReorderList/BlazorReorderList.bundle.scp.css';
 
 /* /Pages/Styled.razor.rz.scp.css */
-[b-zhzujn96di] .item {
+[b-zhzujn96di] .reorder-item {
     cursor: move;
     user-select: none;
 }
 
-    [b-zhzujn96di] .item:hover {
+    [b-zhzujn96di] .reorder-item:hover {
         background: #4cff00;
     }
 
-[b-zhzujn96di] .active {
+[b-zhzujn96di] .reorder-item-active {
     background: #b200ff;
 }
 
-[b-zhzujn96di] .dragging {
+[b-zhzujn96di] .reorder-item-dragging {
     background: #ffd800;
     box-shadow: 0 4px 20px #ffd800AA;
     opacity: 0.8;
@@ -22,7 +22,7 @@
     z-index: 999;
 }
 
-    [b-zhzujn96di] .dragging:hover {
+    [b-zhzujn96di] .reorder-item-dragging:hover {
         background: #ffd800;
     }
 /* /Shared/MainLayout.razor.rz.scp.css */

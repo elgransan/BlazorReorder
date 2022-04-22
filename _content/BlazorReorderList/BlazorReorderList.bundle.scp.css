@@ -1,22 +1,22 @@
 /* _content/BlazorReorderList/Reorder.razor.rz.scp.css */
-.sortable[b-79mb7f4ns1] {
+.reorder[b-79mb7f4ns1] {
     min-height: 10px;
 }
 
-.item[b-79mb7f4ns1] {
-  cursor: move;
-  user-select: none;
+.reorder-item[b-79mb7f4ns1] {
+    cursor: move;
+    user-select: none;
 }
 
-.item:hover[b-79mb7f4ns1] {
-  background: #ffffe0;
+    .reorder-item:hover[b-79mb7f4ns1] {
+        background: #ffffe0;
+    }
+
+.reorder-item-active[b-79mb7f4ns1] {
+    background: #ccc;
 }
 
-.active[b-79mb7f4ns1] {
-  background: #ccc;
-}
-
-.dragging[b-79mb7f4ns1] {
+.reorder-item-dragging[b-79mb7f4ns1] {
     background: #e0ffff;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     opacity: 0.8;
@@ -24,6 +24,6 @@
     z-index: 999;
 }
 
-    .dragging:hover[b-79mb7f4ns1] {
+    .reorder-item-dragging:hover[b-79mb7f4ns1] {
         background: #e0ffff;
     }
