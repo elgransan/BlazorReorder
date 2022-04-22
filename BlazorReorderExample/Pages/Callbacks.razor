@@ -3,15 +3,16 @@
 <PageTitle>Blazor Reorder Example</PageTitle>
 
 <h1>Callbacks</h1>
-<div>@callback: @data</div>
+<p>Callbacks and page level service</p>
+<div>@callback @data</div>
 
 <div class="row">
     <div class="col-4">
         <div class="card">
-            <Reorder Items="list1" TItem="ItemList"
-                OnStart='(i) => { callback = "OnStart"; data = i.ToString(); }'
-                OnChange='(i) => { callback = "OnChange"; data = i.ToString(); }'
-                OnFinish='(i) => { callback = "OnFinish"; data = i.ToString(); }'>
+            <Reorder Items="list1" TItem="ItemList" ReorderService="rs"
+                OnStart='(i) => { callback = "OnStart"; data = i.ToString() ?? ""; }'
+                OnChange='(i) => { callback = "OnChange"; data = i.ToString() ?? ""; }'
+                OnFinish='(i) => { callback = "OnFinish"; data = i.ToString() ?? ""; }'>
                 <div class="mb-2 mx-2">
                     <h5>@context.title</h5>
                     <p>@context.details</p>      
@@ -21,7 +22,7 @@
     </div>
     <div class="col-4">
         <div class="card">
-            <Reorder Items="list2" TItem="ItemList"
+            <Reorder Items="list2" TItem="ItemList" ReorderService="rs"
                 OnStart='(i) => i.domClass = "bg-danger"'
                 OnChange='(i) => i.domClass = "bg-info"'
                 OnFinish='(i) => i.domClass = "bg-success"'>
@@ -34,7 +35,7 @@
     </div>
     <div class="col-4">
         <div class="card">
-            <Reorder Items="list3" TItem="ItemList">
+            <Reorder Items="list3" TItem="ItemList" ReorderService="rs">
                 <div class="mb-2 mx-2">
                     <h5>@context.title</h5>
                     <p>@context.details</p>      
@@ -47,6 +48,25 @@
 @code {
     private string callback = "";
     private string data = "";
+    
+    // You can declare the service at page level (without registering on Progam.cs) 
+    // but yo must include the service in every component you use in the page in order make it work
+    ReorderService<ItemList> rs = new();
+
+    // In this example we are registering a new class inline
+    public class ItemList
+    {
+        public string title { get; set; }
+        public string details { get; set; }
+        public string domClass { get; set; }
+
+        public ItemList(string a, string c)
+        {
+            title = a;
+            domClass = "";
+            details = c;
+        }
+    }
     
     public List<ItemList> list1 = new()
     {

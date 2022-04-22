@@ -1,11 +1,12 @@
 @typeparam TItem
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.JSInterop
-@inject ReorderService<TItem> rs
+@inject IServiceProvider ServiceProvider
 @inject NavigationManager nav
+@inject IJSRuntime JS;
 @implements IDisposable
 
-@if(rs.isDragging && elemPosition.x != -1000)
+@if(rs != null && rs.selected != null && rs.isDragging && elemPosition.x != -1000)
 {
     <div class="dragging item" 
          style="width: @(elemWidth)px; left: @(elemPosition.x)px; top: @(elemPosition.y)px; transform: translateX(@(ghostTrans.x)px) translateY(@(ghostTrans.y)px )">
@@ -13,7 +14,7 @@
     </div>
 }
 
-@if (itemElem != null)
+@if (rs != null && rs.selected != null && itemElem != null)
 {
     <div class="sortable" @ref="sortable">
         @foreach (var item in Items.Select((v, i) => (v, i)))
@@ -30,7 +31,7 @@
 {
     [Parameter, EditorRequired] public RenderFragment<TItem> ChildContent { get; set; } = null!;
     [Parameter, EditorRequired] public List<TItem> Items { get; set; } = null!;
-    [Parameter] public Func<TItem, TItem> Copy { get; set; }
+    [Parameter] public Func<TItem, TItem>? Copy { get; set; }
     [Parameter] public EventCallback<TItem> OnStart { get; set; }
     [Parameter] public EventCallback<TItem> OnChange { get; set; }
     [Parameter] public EventCallback<TItem> OnFinish { get; set; }
@@ -38,16 +39,18 @@
     [Parameter] public bool DisableDrop { get; set; } = false;
     [Parameter] public bool DisableDrag { get; set; } = false;
     [Parameter] public bool WithShadow { get; set; } = true;
+    [Parameter] public ReorderService<TItem>? ReorderService { get; set; }
 
     private bool shouldRender = true; // cancel re-rendering
     private DotNetObjectReference<Reorder<TItem>>? dotNetHelper; //js-interop 2-ways
     Dictionary<int, ElementReference> itemElem = new();
-    ElementReference? sortable;
+    ElementReference sortable;
     point elemPosition = new point(-1000, 0);
     point ghostTrans = new point(0, 0);
     point clickPosition = new point(0, 0);
     int elemWidth = 0;
     int newElemIndex = -1;
+    private IReorderService<TItem>? rs;
 
     protected override void OnInitialized()
     {
@@ -61,7 +64,7 @@
 
     public void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        if (dotNetHelper == null) return;
+        if (dotNetHelper == null || rs == null) return;
         base.InvokeAsync(async () =>
         {
             await rs.removeEvents(dotNetHelper);
@@ -73,15 +76,22 @@
     {
         if (firstRender)
         {
+            // set if is using scoped service or page service
+            var provider = ServiceProvider.GetService(typeof(IReorderService<TItem>));
+            if (provider != null)
+                rs = (IReorderService<TItem>)provider;
+            if (rs == null && ReorderService != null) rs = ReorderService.InitService(JS);
+            if (rs == null) return;
             dotNetHelper = DotNetObjectReference.Create(this);
             await rs.initEvents(dotNetHelper);
+            StateHasChanged();
         }
     }
 
     public async Task onPress(MouseEventArgs m, TItem item, int index)
     {
         if (Disabled || DisableDrag) return;
-        if (itemElem == null) return;
+        if (itemElem == null || rs == null) return;
 
         shouldRender = false; // Because the method triggers re-render, the click propagation is canceled, if you have a link/or any click event inside it's going to stop working
         var ghostElem = itemElem[index];
@@ -96,7 +106,7 @@
     public async Task onTouch(TouchEventArgs m, TItem item, int index)
     {
         if (Disabled || DisableDrag) return;
-        if (itemElem == null) return;
+        if (itemElem == null || rs == null) return;
 
         shouldRender = false; // Because the method triggers re-render, the click propagation is canceled, if you have a link/or any click event inside it's going to stop working
         var ghostElem = itemElem[index];
@@ -112,6 +122,7 @@
     [JSInvokable]
     public async Task onRelease(MouseEventArgs m)
     {
+        if (rs == null) return;
         elemPosition = new point(-1000, 0);
         if (rs.isDragging && rs.originItems == Items)
         {
@@ -134,7 +145,7 @@
     [JSInvokable]
     public async Task onMove(point pos)
     {
-        if (itemElem == null) return;
+        if (itemElem == null || rs == null || rs.originItems == null || rs.selected == null) return;
         if (rs.isDragging)
         {
             shouldRender = false;
@@ -179,6 +190,7 @@
     // checks if mouse x/y is on top of an item 
     async Task<bool> isOnTop(ElementReference item, point pos)
     {
+        if (rs == null) return false;
         var box = await rs.getClientRect(item);
         if (box.width < 0) return false;
         var isx = (pos.x > box.left && pos.x < (box.left + box.width));
