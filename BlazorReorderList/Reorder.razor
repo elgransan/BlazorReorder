@@ -14,12 +14,12 @@
     </div>
 }
 
-@if (rs != null && rs.selected != null && itemElem != null)
+@if (rs != null && itemElem != null)
 {
     <div class="sortable" @ref="sortable">
         @foreach (var item in Items.Select((v, i) => (v, i)))
         {
-            <div @ref="itemElem[item.i]" @key="item.i" class="item @((object)item.v == (object)rs.selected ? "active" : "")"
+            <div @ref="itemElem[item.i]" @key="item.i" class="item @(rs.selected != null && (object)item.v == (object)rs.selected ? "active" : "")"
             @onmousedown="async (e) => await onPress(e, item.v, item.i)" @ontouchstart="async (e) => await onTouch(e, item.v, item.i)">
                 @ChildContent(item.v)
             </div>
@@ -90,20 +90,16 @@
 
     public async Task onPress(MouseEventArgs m, TItem item, int index)
     {
-        if (Disabled || DisableDrag) return;
-        if (itemElem == null || rs == null) return;
-
-        shouldRender = false; // Because the method triggers re-render, the click propagation is canceled, if you have a link/or any click event inside it's going to stop working
-        var ghostElem = itemElem[index];
-        elemWidth = await rs.getWidth(ghostElem);
-        elemPosition = await rs.getPosition(ghostElem);
-        clickPosition = await rs.getPoint(m.PageX, m.PageY, m.ClientX, m.ClientY);
-        TItem? clone = Copy != null ? Copy(item) : default(TItem);
-        rs.Set(Items, clone != null ? clone : item, index, clickPosition, clone != null);
-        await OnStart.InvokeAsync(rs.selected);
+        await initDrag(item, index, m.PageX, m.PageY, m.ClientX, m.ClientY);
     }
 
     public async Task onTouch(TouchEventArgs m, TItem item, int index)
+    {
+        var p = m.TargetTouches.First();
+        await initDrag(item, index, p.PageX, p.PageY, p.ClientX, p.ClientY);
+    }
+
+    private async Task initDrag(TItem item, int index, double pageX, double pageY, double clientX, double clientY)
     {
         if (Disabled || DisableDrag) return;
         if (itemElem == null || rs == null) return;
@@ -112,8 +108,8 @@
         var ghostElem = itemElem[index];
         elemWidth = await rs.getWidth(ghostElem);
         elemPosition = await rs.getPosition(ghostElem);
-        var p = m.TargetTouches.First();
-        clickPosition = await rs.getPoint(p.PageX, p.PageY, p.ClientX, p.ClientY);
+        
+        clickPosition = await rs.getPoint(pageX, pageY, clientX, clientY);
         TItem? clone = Copy != null ? Copy(item) : default(TItem);
         rs.Set(Items, clone != null ? clone : item, index, clickPosition, clone != null);
         await OnStart.InvokeAsync(rs.selected);
