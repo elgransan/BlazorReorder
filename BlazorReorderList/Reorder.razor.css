@@ -5,6 +5,7 @@
 .reorder-item {
     cursor: move;
     user-select: none;
+    touch-action: none;
 }
 
     .reorder-item:hover {
