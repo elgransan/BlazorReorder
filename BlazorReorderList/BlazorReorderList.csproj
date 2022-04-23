@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <PackageId>Reorder</PackageId>
+    <PackageId>BlazorReorderList</PackageId>
     <Version>1.0.0</Version>
     <Authors>Santiago Cattaneo</Authors>
     <projectUrl>https://github.com/elgransan/BlazorReorder</projectUrl>
