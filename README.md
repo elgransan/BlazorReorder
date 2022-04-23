@@ -1,6 +1,6 @@
 # Blazor Reorder
 
-<a href="https://www.nuget.org/packages/Reorder/1.0.0"><img src="https://img.shields.io/nuget/v/Reorder?style=flat-square" alt="Download Reorder"/></a>
+<a href="https://www.nuget.org/packages/BlazorReorderList/1.0.0"><img src="https://img.shields.io/nuget/v/BlazorReorderList?style=flat-square" alt="Download Reorder"/></a>
 
 ### Live Examples
 https://elgransan.github.io/BlazorReorder
