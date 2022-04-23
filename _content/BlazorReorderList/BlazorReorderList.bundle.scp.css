@@ -6,6 +6,7 @@
 .reorder-item[b-79mb7f4ns1] {
     cursor: move;
     user-select: none;
+    touch-action: none;
 }
 
     .reorder-item:hover[b-79mb7f4ns1] {
