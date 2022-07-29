@@ -45,6 +45,7 @@
     Dictionary<int, ElementReference> itemElem = new();
     ElementReference reorder;
     point elemPosition = new point(-1000, 0);
+    clientRect? elemRect;
     point ghostTrans = new point(0, 0);
     point clickPosition = new point(0, 0);
     int elemWidth = 0;
@@ -106,6 +107,7 @@
         var ghostElem = itemElem[index];
         elemWidth = await rs.getWidth(ghostElem);
         elemPosition = await rs.getPosition(ghostElem);
+        elemRect = await rs.getClientRect(ghostElem);
         
         clickPosition = await rs.getPoint(pageX, pageY, clientX, clientY);
         TItem? clone = Copy != null ? Copy(item) : default(TItem);
@@ -175,7 +177,7 @@
         var box = await rs.getClientRect(item);
         if (box.width < 0) return false;
         var isx = (pos.x > box.left && pos.x < (box.left + box.width));
-        var isy = (pos.y > box.top && pos.y < (box.top + box.height));
+        var isy = (pos.y > box.top && pos.y < (box.top + Math.Min(box.height, elemRect?.height ?? 100000)));
         var res = isx && isy;
 
         return res;
