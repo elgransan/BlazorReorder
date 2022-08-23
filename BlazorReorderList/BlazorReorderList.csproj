@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageId>BlazorReorderList</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>Santiago Cattaneo</Authors>
     <projectUrl>https://github.com/elgransan/BlazorReorder</projectUrl>
     <description>Drag and Drop Reorder List for Blazor, with the less JS interop possible</description>

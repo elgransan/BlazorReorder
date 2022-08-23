@@ -147,7 +147,7 @@
 
                 // If is on top of an element or if top top of a empty list -> confirm drag
                 if (await isOnTop(subItem, pos) ||
-                Items.Count == 0 && await isOnTop((ElementReference) reorder, pos))
+                Items.Count == 0 && await isOnTop(reorder, pos))
                 {
                     // reorder
                     if (!rs.isCopy())
