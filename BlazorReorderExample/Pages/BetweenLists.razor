@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col-4">
         <div class="card">
-            <Reorder Items="list1" TItem="ListItem" Copy='(i) => copy ? i with { title = i.title + " copy" } : null'>
+            <Reorder Items="list1" TItem="ListItem" Copy=@((i) => copy ? i with { title = i.title + " copy" } : null) OnFinish="StateHasChanged">
                 <div class="mb-2 mx-2">
                     <h5>@context.title</h5>
                     <p>@context.details <a href="@context.url">Go</a></p>      
@@ -20,7 +20,7 @@
     </div>
     <div class="col-4">
         <div class="card">
-            <Reorder Items="list2" TItem="ListItem">
+            <Reorder Items="list2" TItem="ListItem" OnFinish="StateHasChanged">
                 <div class="mb-2 mx-2">
                     <h5>@context.title</h5>
                     <p>@context.details <a href="@context.url">Go</a></p>      
@@ -31,7 +31,7 @@
     </div>
     <div class="col-4">
         <div class="card">
-            <Reorder Items="list3" TItem="ListItem">
+            <Reorder Items="list3" TItem="ListItem" OnFinish="StateHasChanged">
                 <div class="mb-2 mx-2">
                     <h5>@context.title</h5>
                     <p>@context.details <a href="@context.url">Go</a></p>      
