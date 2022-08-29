@@ -1,0 +1,65 @@
+﻿@page "/NestedLists"
+@using System.Text.Json
+
+<PageTitle>Blazor Reorder Example</PageTitle>
+
+<h1>Nested Lists</h1>
+<div class="row">
+    <div class="col-6">
+        <div class="card">
+            <Reorder Items="list1" TItem="ItemList" ReorderService="rs" OnFinish="StateHasChanged">
+                <div class="mb-2 mx-2">
+                    <h5>@context.title</h5>
+                    <p>@context.details <a href="@context.url">Go</a></p>
+                    <Reorder Items="context.childs" TItem="ItemList" ReorderService="rs" Context="childs" OnFinish="StateHasChanged">
+                        <div class="mb-2 mx-2">
+                            <h5>Child @childs.title</h5>
+                            <p>@childs.details <a href="@childs.url">Go</a></p>
+                        </div>
+                    </Reorder>
+                </div>
+            </Reorder>
+        </div>
+    </div>
+    <div class="col-6">
+        <pre class="card">@(JsonSerializer.Serialize(list1, new JsonSerializerOptions() { WriteIndented = true }))</pre>
+    </div>
+</div>
+
+
+@code {
+    ReorderService<ItemList> rs = new();
+
+    public class ItemList
+    {
+        public string title { get; set; }
+        public string url { get; set; }
+        public string details { get; set; }
+        public List<ItemList> childs { get; set; }
+
+        public ItemList(string a, string b, string c, List<ItemList> d)
+        {
+            title = a;
+            url = b;
+            details = c;
+            childs = d;
+        }
+    }
+
+    public List<ItemList> list1 = new()
+    {
+        new ItemList("Google", "https://google.com", "Again looking for a bug ...", new()
+        {
+            new ItemList("Facebook", "https://facebook.com", "Meta", new()),
+            new ItemList("Instagram", "https://instagram.com", "Meta", new()),
+            new ItemList("Whatsapp", "https://web.whatsapp.com", "Meta", new()),
+        }),
+        new ItemList("StackOverflow", "https://stackoverflow.com", "Could be this the solution?", new()
+        {
+            new ItemList("Oculus", "https://oculus.com", "Meta", new()),
+        }),
+        new ItemList("GitHub", "https://github.com", "Let's get awesome code", new()),
+        new ItemList("Twitter", "https://twitter.com", "I want to rest", new()),
+        new ItemList("Another", "https://another.com", "The solution must be somewhere!!!", new())
+    };
+}

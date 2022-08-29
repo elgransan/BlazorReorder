@@ -20,7 +20,7 @@
         @foreach (var item in Items.Select((v, i) => (v, i)))
         {
             <div @ref="itemElem[item.i]" @key="item.i" class="reorder-item @(rs.selected != null && (object)item.v == (object)rs.selected ? "reorder-item-active" : "")"
-            @onmousedown="async (e) => await onPress(e, item.v, item.i)" @ontouchstart="async (e) => await onTouch(e, item.v, item.i)">
+            @onmousedown="async (e) => await onPress(e, item.v, item.i)" @ontouchstart="async (e) => await onTouch(e, item.v, item.i)" @onmousedown:stopPropagation @ontouchstart:stopPropagation>
                 @ChildContent(item.v)
             </div>
         }
