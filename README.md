@@ -65,4 +65,5 @@ Drag between lists:
 - [x] Page service (insted scoped)
 - [x] Create Public Nuget Package
 - [x] Code cleanup
+- [ ] Nested lists
 - [ ] Documentation
